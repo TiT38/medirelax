@@ -1,0 +1,2323 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MediRelax">
+    <title>MediRelax - Cohérence Cardiaque</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e3a8a, #0f172a);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        .screen {
+            display: none;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        /* Header avec menu hamburger */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .header-left {
+            flex: 1;
+        }
+        
+        .logo {
+            font-size: 36px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #06b6d4, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: rgba(255,255,255,0.7);
+            font-size: 16px;
+        }
+        
+        /* Menu hamburger */
+        .menu-button {
+            width: 44px;
+            height: 44px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .menu-button:active {
+            transform: scale(0.95);
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .menu-line {
+            width: 20px;
+            height: 2px;
+            background: white;
+            border-radius: 1px;
+            transition: all 0.3s ease;
+        }
+        
+        /* Panneau latéral */
+        .side-panel {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 300px;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(20px);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: -4px 0 20px rgba(0,0,0,0.5);
+        }
+        
+        .side-panel.open {
+            right: 0;
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .panel-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .close-panel {
+            width: 32px;
+            height: 32px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .panel-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .panel-section:last-child {
+            border-bottom: none;
+        }
+        
+        .panel-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: rgba(255,255,255,0.9);
+        }
+        
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+        
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Stats compactes */
+        .stats-compact {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+        
+        .stat-item {
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Quick start */
+        .quick-start {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(16, 185, 129, 0.2));
+            border: 2px solid rgba(34, 197, 94, 0.3);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .quick-start:active {
+            transform: scale(0.98);
+        }
+        
+        .quick-start-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .quick-start-desc {
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+        }
+        
+        /* Sessions grid optimisé */
+        .sessions-container {
+            margin-bottom: 30px;
+        }
+        
+        .sessions-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .session-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .session-card-mini {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        
+        .session-card-mini:active {
+            transform: scale(0.95);
+            background: rgba(255,255,255,0.12);
+        }
+        
+        .session-card-mini.scan-special {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(168, 85, 247, 0.1));
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        
+        .session-card-mini.meditation-special {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(236, 72, 153, 0.1));
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+        
+        .session-info {
+            text-align: center;
+        }
+        
+        .session-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        
+        .session-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .session-time {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        /* Metrics bar améliorée */
+        .metrics-bar {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 8px;
+            margin: 20px 0;
+        }
+        
+        .metric-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 12px 8px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+        
+        .metric-card.primary {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        
+        .metric-card.adaptive-active {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(34, 197, 94, 0.2));
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metric-card.adaptive-active::before {
+            content: '🧠';
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            font-size: 10px;
+            opacity: 0.7;
+        }
+        
+        .metric-icon {
+            font-size: 18px;
+            margin-bottom: 6px;
+        }
+        
+        .metric-value {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+        
+        .metric-label {
+            font-size: 9px;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Mode Zen Toggle */
+        .zen-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .zen-toggle.active {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+        
+        .zen-toggle:active {
+            transform: scale(0.95);
+        }
+        
+        /* Mode Zen actif */
+        .zen-mode .metrics-bar {
+            opacity: 0.2;
+            pointer-events: none;
+        }
+        
+        .zen-mode .metric-value {
+            visibility: hidden;
+        }
+        
+        .zen-mode .metric-value::after {
+            content: '•••';
+            visibility: visible;
+        }
+        
+        /* Breathing area reste identique */
+        .breathing-area {
+            text-align: center;
+            margin: 40px 0;
+        }
+        
+        .breathing-guide-container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .breathing-instruction-large {
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .breathing-instruction-large #breathEmoji {
+            font-size: 36px;
+        }
+        
+        .breathing-bar-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .breathing-bar {
+            width: 100%;
+            height: 60px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        
+        .breathing-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #06b6d4, #8b5cf6);
+            border-radius: 28px;
+            transition: none;
+            position: relative;
+        }
+        
+        .breathing-bar-fill.inhale {
+            background: linear-gradient(90deg, #06b6d4, #3b82f6);
+        }
+        
+        .breathing-bar-fill.exhale {
+            background: linear-gradient(90deg, #8b5cf6, #ec4899);
+        }
+        
+        .breathing-counter {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+        
+        .breathing-phase-indicators {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .phase-indicator {
+            padding: 5px 15px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .phase-indicator.active {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-weight: bold;
+        }
+        
+        .timer {
+            font-size: 48px;
+            font-weight: 300;
+            text-align: center;
+            margin: 20px 0;
+            letter-spacing: 4px;
+        }
+        
+        .meditation-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 24px;
+            margin: 20px 0;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .meditation-label {
+            font-size: 14px;
+            color: #93c5fd;
+            margin-bottom: 16px;
+        }
+        
+        .meditation-text {
+            font-style: italic;
+            font-size: 18px;
+            line-height: 1.6;
+            color: rgba(255,255,255,0.9);
+        }
+        
+        /* Controls simplifiés */
+        .controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin: 30px 0;
+        }
+        
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 25px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+        
+        .btn:active {
+            transform: scale(0.95);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        /* Progress bar */
+        .progress-bar {
+            width: 100%;
+            max-width: 300px;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            margin: 20px auto;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #06b6d4, #8b5cf6);
+            width: 0%;
+            transition: width 1s ease;
+            border-radius: 2px;
+        }
+        
+        /* Options panel dans le menu */
+        .options-group {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 12px;
+        }
+        
+        .option-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .option-item:last-child {
+            border-bottom: none;
+        }
+        
+        .option-label {
+            font-size: 14px;
+            color: rgba(255,255,255,0.9);
+        }
+        
+        /* Toggle switch */
+        .toggle-switch {
+            width: 44px;
+            height: 24px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .toggle-switch.active {
+            background: #22c55e;
+        }
+        
+        .toggle-thumb {
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 10px;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .toggle-switch.active .toggle-thumb {
+            left: 22px;
+        }
+        
+        /* Volume slider dans le panneau */
+        .volume-control {
+            margin: 15px 0;
+        }
+        
+        .volume-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 8px;
+        }
+        
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #8b5cf6;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        /* Mode buttons dans le panneau */
+        .mode-selector {
+            display: flex;
+            gap: 8px;
+            margin: 12px 0;
+        }
+        
+        .mode-btn {
+            flex: 1;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .mode-btn.active {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: rgba(139, 92, 246, 0.4);
+        }
+        
+        .mode-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Adaptive status compact */
+        .adaptive-status {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: none;
+            animation: slideUp 0.5s ease-out;
+            z-index: 100;
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateX(-50%) translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes gong-pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255,255,255,0.3);
+            }
+            50% {
+                box-shadow: 0 0 20px 10px rgba(255,255,255,0.2);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255,255,255,0);
+            }
+        }
+        
+        .gong-pulse {
+            animation: gong-pulse 0.8s ease-out;
+        }
+        
+        /* Results screen optimisé */
+        .results-screen {
+            background: linear-gradient(135deg, #065f46, #047857, #065f46);
+        }
+        
+        .results-content {
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .results-icon {
+            font-size: 72px;
+            margin: 20px 0;
+        }
+        
+        .results-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 30px 0;
+        }
+        
+        .result-item {
+            background: rgba(255,255,255,0.1);
+            padding: 16px;
+            border-radius: 16px;
+        }
+        
+        .result-value {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        
+        .result-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .breathing-guide-container {
+                max-width: 100%;
+                padding: 0 10px;
+            }
+            
+            .breathing-bar {
+                height: 50px;
+            }
+            
+            .breathing-counter {
+                font-size: 28px;
+            }
+            
+            .timer {
+                font-size: 40px;
+            }
+            
+            .session-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Écran d'accueil optimisé -->
+    <div id="homeScreen" class="screen active">
+        <div class="app-header">
+            <div class="header-left">
+                <div class="logo">MediRelax</div>
+                <div class="subtitle">Cohérence cardiaque adaptative                </div>
+                <div style="margin-top: 10px; padding: 10px; background: rgba(139, 92, 246, 0.1); border-radius: 8px; border: 1px solid rgba(139, 92, 246, 0.3);">
+                    <p style="font-size: 12px; color: rgba(255,255,255,0.8); margin: 0 0 5px 0;">
+                        🧘‍♂️ <strong>Scan Corporel :</strong> 10 minutes de détente profonde avec respiration 5/5 (6 resp/min)
+                    </p>
+                    <p style="font-size: 12px; color: rgba(255,255,255,0.8); margin: 0;">
+                        ✨ <strong>Méditations Thématiques :</strong> 6 thèmes disponibles (Gratitude, Abondance, Amour...) • Facilement extensible
+                    </p>
+                </div>
+            </div>
+            <div class="menu-button" onclick="toggleMenu()">
+                <div class="menu-line"></div>
+                <div class="menu-line"></div>
+                <div class="menu-line"></div>
+            </div>
+        </div>
+        
+        <!-- Stats compactes -->
+        <div class="stats-compact">
+            <div class="stats-row">
+                <div class="stat-item">
+                    <div class="stat-value" style="color: #f97316;">3</div>
+                    <div class="stat-label">Jours</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" style="color: #22c55e;">73%</div>
+                    <div class="stat-label">Cohérence</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" style="color: #3b82f6;">28</div>
+                    <div class="stat-label">Sessions</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" style="color: #8b5cf6;">5.2</div>
+                    <div class="stat-label">Rythme moy.</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Start -->
+        <div class="quick-start" onclick="startQuickSession()">
+            <div class="quick-start-title">⚡ Session Rapide du Jour</div>
+            <div class="quick-start-desc">3 minutes pour retrouver votre équilibre</div>
+        </div>
+        
+        <!-- Sessions -->
+        <div class="sessions-container">
+            <h2 class="sessions-title">🎯 Choisir une session</h2>
+            <div class="session-grid">
+                <div class="session-card-mini" onclick="startSession('sos')">
+                    <div class="session-icon">🚨</div>
+                    <div class="session-name">SOS Stress</div>
+                    <div class="session-time">1min 30s</div>
+                </div>
+                
+                <div class="session-card-mini" onclick="startSession('focus')">
+                    <div class="session-icon">🎯</div>
+                    <div class="session-name">Focus</div>
+                    <div class="session-time">4min</div>
+                </div>
+                
+                <div class="session-card-mini" onclick="startSession('recovery')">
+                    <div class="session-icon">💚</div>
+                    <div class="session-name">Récup</div>
+                    <div class="session-time">5min</div>
+                </div>
+                
+                <div class="session-card-mini" onclick="startSession('transition')">
+                    <div class="session-icon">🌊</div>
+                    <div class="session-name">Transition</div>
+                    <div class="session-time">3min</div>
+                </div>
+                
+                <div class="session-card-mini scan-special" onclick="startSession('scan')">
+                    <div class="session-icon">🧘‍♂️</div>
+                    <div class="session-name">Scan Corporel</div>
+                    <div class="session-time">10min • Respiration 5/5 • Relaxation profonde</div>
+                </div>
+                
+                <div class="session-card-mini meditation-special" onclick="showMeditationSelection()">
+                    <div class="session-icon">✨</div>
+                    <div class="session-name">Méditations Thématiques</div>
+                    <div class="session-time">5-10min • 6 thèmes disponibles • Guidage personnalisé</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Panneau latéral -->
+    <div id="sidePanel" class="side-panel">
+        <div class="panel-header">
+            <h3 class="panel-title">Paramètres</h3>
+            <button class="close-panel" onclick="toggleMenu()">×</button>
+        </div>
+        
+        <!-- Section Mode -->
+        <div class="panel-section">
+            <h4 class="panel-section-title">📱 Mode d'affichage</h4>
+            <div class="option-item">
+                <span class="option-label">Mode Caméra</span>
+                <div class="toggle-switch" id="cameraToggle" onclick="toggleDetectionMode()">
+                    <div class="toggle-thumb"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section Respiration -->
+        <div class="panel-section">
+            <h4 class="panel-section-title">🌬️ Respiration</h4>
+            <div class="options-group">
+                <div class="option-item">
+                    <span class="option-label">Mode Adaptatif</span>
+                    <div class="toggle-switch" id="adaptiveToggle" onclick="toggleAdaptive()">
+                        <div class="toggle-thumb"></div>
+                    </div>
+                </div>
+                <div class="mode-selector">
+                    <button class="mode-btn" id="modeBtn-beginner" onclick="setBreathingMode('beginner')">Débutant</button>
+                    <button class="mode-btn active" id="modeBtn-intermediate" onclick="setBreathingMode('intermediate')">Intermédiaire</button>
+                    <button class="mode-btn" id="modeBtn-advanced" onclick="setBreathingMode('advanced')">Avancé</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section Audio -->
+        <div class="panel-section">
+            <h4 class="panel-section-title">🎵 Sons thérapeutiques</h4>
+            <div class="options-group">
+                <div class="option-item">
+                    <span class="option-label">Guidage vocal</span>
+                    <div class="toggle-switch active" id="voiceToggle" onclick="toggleVoice()">
+                        <div class="toggle-thumb"></div>
+                    </div>
+                </div>
+                <div class="option-item">
+                    <span class="option-label">Gong respiratoire</span>
+                    <div class="toggle-switch active" id="gongToggle" onclick="toggleGong()">
+                        <div class="toggle-thumb"></div>
+                    </div>
+                </div>
+                <div class="option-item">
+                    <span class="option-label">Sons binauraux</span>
+                    <div class="toggle-switch active" id="audioToggle" onclick="toggleAudio()">
+                        <div class="toggle-thumb"></div>
+                    </div>
+                </div>
+                <div class="volume-control">
+                    <div class="volume-label">Volume gong</div>
+                    <input type="range" id="gongVolumeSlider" min="0" max="100" value="70" oninput="updateGongVolume(this.value)">
+                </div>
+                <div class="volume-control">
+                    <div class="volume-label">Volume musique</div>
+                    <input type="range" id="volumeSlider" min="0" max="100" value="30" oninput="updateVolume(this.value)">
+                </div>
+                <div class="volume-control">
+                    <div class="volume-label">Volume voix</div>
+                    <input type="range" id="voiceVolumeSlider" min="0" max="100" value="70" oninput="updateVoiceVolume(this.value)">
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                    <p style="font-size: 11px; color: rgba(255,255,255,0.6); margin: 0 0 5px 0;">
+                        🔔 Le gong sonne doucement à chaque changement : aigu (inspire) → grave (expire)
+                    </p>
+                    <p style="font-size: 11px; color: rgba(255,255,255,0.6); margin: 0;">
+                        💡 Parfait pour pratiquer les yeux fermés en toute autonomie
+                    </p>
+                    <div style="margin-top: 10px; display: flex; gap: 10px;">
+                        <button onclick="testGong()" style="flex: 1; padding: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; font-size: 12px; cursor: pointer;">
+                            🔔 Tester le gong
+                        </button>
+                        <button onclick="testBinaural()" style="flex: 1; padding: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; font-size: 12px; cursor: pointer;">
+                            🎵 Tester les sons
+                        </button>
+                    </div>
+                </div>
+                <select id="frequencySelect" oninput="changeFrequency(this.value)" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; font-size: 14px; margin-top: 10px;">
+                    <option value="528hz">528 Hz - Amour</option>
+                    <option value="432hz">432 Hz - Harmonie</option>
+                    <option value="396hz">396 Hz - Libération</option>
+                    <option value="639hz">639 Hz - Relations</option>
+                    <option value="theta">Ondes Theta</option>
+                    <option value="alpha">Ondes Alpha</option>
+                    <option value="coherence">0.1 Hz - Cohérence</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Section Stats -->
+        <div class="panel-section">
+            <h4 class="panel-section-title">📊 Statistiques détaillées</h4>
+            <div class="options-group" style="font-size: 14px; line-height: 1.8;">
+                <div>Sessions totales : <strong>28</strong></div>
+                <div>Temps total : <strong>1h 47min</strong></div>
+                <div>Cohérence moyenne : <strong>73%</strong></div>
+                <div>Meilleure série : <strong>7 jours</strong></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Overlay -->
+    <div id="overlay" class="overlay" onclick="toggleMenu()"></div>
+    
+    <!-- Écran de session -->
+    <div id="sessionScreen" class="screen">
+        <button class="zen-toggle" id="zenToggle" onclick="toggleZenMode()">
+            👁️ Mode Zen
+        </button>
+        
+        <div class="header" style="text-align: center;">
+            <div style="font-size: 24px; font-weight: bold; margin-bottom: 8px;" id="sessionTitle">Boost Focus</div>
+            <div style="color: rgba(255,255,255,0.7);" id="sessionDesc">Concentration laser</div>
+        </div>
+        
+        <div class="metrics-bar" id="metricsBar">
+            <div class="metric-card primary">
+                <div class="metric-icon">❤️</div>
+                <div class="metric-value" id="heartRate">--</div>
+                <div class="metric-label">BPM</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon">📊</div>
+                <div class="metric-value" id="hrv">--</div>
+                <div class="metric-label">HRV</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon">🎯</div>
+                <div class="metric-value" id="coherence">0</div>
+                <div class="metric-label">Score</div>
+            </div>
+            <div class="metric-card" id="breathRateCard">
+                <div class="metric-icon">🌬️</div>
+                <div class="metric-value" id="breathRate">5.0</div>
+                <div class="metric-label">R/min</div>
+            </div>
+        </div>
+        
+        <div class="breathing-area">
+            <div class="breathing-guide-container">
+                <div class="breathing-instruction-large">
+                    <span id="breathEmoji">🧘‍♀️</span>
+                    <span id="breathInstruction">Respirez naturellement</span>
+                </div>
+                
+                <div class="breathing-bar-container">
+                    <div class="breathing-bar">
+                        <div class="breathing-bar-fill" id="breathingBarFill"></div>
+                    </div>
+                    <div class="breathing-counter" id="breathingCounter">--</div>
+                </div>
+                
+                <div class="breathing-phase-indicators">
+                    <span class="phase-indicator">Inspire</span>
+                    <span class="phase-indicator">Expire</span>
+                </div>
+            </div>
+            
+            <div class="timer" id="timer">4:00</div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+        
+        <div class="meditation-card" id="meditationCard" style="display: none;">
+            <div class="meditation-label">💭 Guidage mental</div>
+            <div class="meditation-text" id="meditationText">
+                "Votre attention se pose naturellement sur votre souffle..."
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn btn-primary" id="playBtn" onclick="toggleSession()">
+                ▶️ Commencer
+            </button>
+            <button class="btn btn-secondary" onclick="goHome()">
+                🏠 Retour
+            </button>
+        </div>
+    </div>
+    
+    <!-- Écran de résultats -->
+    <div id="resultsScreen" class="screen results-screen">
+        <div class="results-content">
+            <div class="results-icon">🎉</div>
+            <div class="results-title">Session complétée !</div>
+            
+            <div class="results-grid">
+                <div class="result-item">
+                    <div class="result-value" style="color: #22c55e;" id="finalCoherence">75%</div>
+                    <div class="result-label">Cohérence finale</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-value" style="color: #3b82f6;" id="finalDuration">4:00</div>
+                    <div class="result-label">Durée complète</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-value" style="color: #8b5cf6;" id="finalBreathRate">5.2</div>
+                    <div class="result-label">Rythme final</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-value" style="color: #f59e0b;" id="finalHR">68</div>
+                    <div class="result-label">FC finale</div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button class="btn btn-primary" onclick="goHome()">
+                    🏠 Retour
+                </button>
+                <button class="btn btn-secondary" onclick="startQuickSession()">
+                    ➕ Nouvelle
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Écran de sélection des méditations -->
+    <div id="meditationSelectionScreen" class="screen">
+        <div class="app-header">
+            <div class="header-left">
+                <div class="logo">Méditations Thématiques</div>
+                <div class="subtitle">Choisissez votre thème de méditation</div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px; display: grid; gap: 12px;" id="meditationGrid">
+            <!-- Les cartes de méditation seront générées dynamiquement -->
+        </div>
+        
+        <div class="controls" style="margin-top: 30px;">
+            <button class="btn btn-secondary" onclick="goHome()">
+                🏠 Retour
+            </button>
+        </div>
+    </div>
+    
+    <!-- Camera instruction simplifiée -->
+    <div id="cameraInstruction" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.95); color: white; padding: 30px; border-radius: 20px; text-align: center; z-index: 1000; max-width: 350px;">
+        <h3 style="margin-bottom: 20px;">📸 Détection du rythme cardiaque</h3>
+        <p style="margin-bottom: 20px;">Placez votre index sur la caméra arrière</p>
+        <div style="font-size: 48px; margin: 20px 0;">👆</div>
+        <p style="color: #fbbf24;">Le flash va s'allumer automatiquement</p>
+        <button class="btn btn-primary" onclick="this.parentElement.style.display='none'" style="margin-top: 20px;">
+            Compris
+        </button>
+    </div>
+    
+    <!-- Adaptive status -->
+    <div id="adaptiveStatus" class="adaptive-status">
+        <span id="adaptiveMessage">Adaptation en cours...</span>
+    </div>
+
+    <script>
+        // État global simplifié
+        let menuOpen = false;
+        let zenMode = false;
+        let detectionMode = 'simulation';
+        let adaptiveMode = false;
+        let audioEnabled = true;
+        let voiceEnabled = true;
+        let gongEnabled = true;
+        let gongVolume = 0.7;
+        let musicVolume = 0.3;
+        let currentBreathingMode = 'intermediate';
+        let isActive = false;
+        let currentSession = 'focus';
+        let timeRemaining = 240;
+        let totalDuration = 240;
+        let sessionTimer = null;
+        let breathingAnimation = null;
+        let coherence = 0;
+        let heartRate = 0;
+        let hrv = 0;
+        let breathingRate = 5.0;
+        let lastVoiceTime = 0;
+        let speechSynth = window.speechSynthesis;
+        let currentUtterance = null;
+        let audioContext = null;
+        let binauralOscillators = null;
+        let binauralGainNode = null;
+        let currentFrequency = '528hz';
+        
+        const sessions = {
+            sos: { name: 'SOS Stress', duration: 90, desc: 'Ancrage d\'urgence' },
+            focus: { name: 'Boost Focus', duration: 240, desc: 'Concentration laser' },
+            recovery: { name: 'Récup Express', duration: 300, desc: 'Régénération profonde' },
+            transition: { name: 'Transition Fluide', duration: 180, desc: 'Fluidité mentale' },
+            scan: { name: 'Scan Corporel', duration: 600, desc: 'Relaxation profonde guidée' },
+            meditation: { name: 'Méditation Guidée', duration: 300, desc: 'Thème personnalisé' }
+        };
+        
+        // Méditations thématiques
+        const thematicMeditations = {
+            gratitude: {
+                name: 'Gratitude',
+                icon: '🙏',
+                duration: 300, // 5 minutes
+                desc: 'Cultivez la reconnaissance',
+                color: 'rgba(251, 191, 36, 0.2)',
+                borderColor: 'rgba(251, 191, 36, 0.3)',
+                guidance: {
+                    start: "Bienvenue dans cette méditation de gratitude. Installez-vous confortablement et laissez la reconnaissance remplir votre cœur.",
+                    inhale: ["Inspirez la gratitude", "Accueillez l'abondance", "Recevez les bienfaits"],
+                    exhale: ["Expirez la reconnaissance", "Partagez votre joie", "Rayonnez la gratitude"],
+                    phases: [
+                        "Pensez à trois choses pour lesquelles vous êtes reconnaissant aujourd'hui. Laissez cette gratitude vous envahir.",
+                        "Ressentez la chaleur de la reconnaissance dans votre poitrine. Elle grandit à chaque respiration.",
+                        "Visualisez les personnes qui enrichissent votre vie. Envoyez-leur silencieusement votre gratitude.",
+                        "Appréciez votre corps, ce véhicule extraordinaire qui vous permet de vivre chaque expérience.",
+                        "La gratitude transforme ce que vous avez en suffisance. Vous êtes comblé de bienfaits."
+                    ]
+                }
+            },
+            abundance: {
+                name: 'Abondance',
+                icon: '💰',
+                duration: 600, // 10 minutes
+                desc: 'Attirez la prospérité',
+                color: 'rgba(34, 197, 94, 0.2)',
+                borderColor: 'rgba(34, 197, 94, 0.3)',
+                guidance: {
+                    start: "Méditation de l'abondance. Ouvrez-vous à la prospérité infinie de l'univers.",
+                    inhale: ["Inspirez l'abondance", "Accueillez la prospérité", "Recevez la richesse"],
+                    exhale: ["Expirez les limitations", "Libérez les blocages", "Lâchez la pénurie"],
+                    phases: [
+                        "Vous méritez l'abondance sous toutes ses formes. Sentez cette vérité dans chaque cellule de votre corps.",
+                        "L'argent est une énergie qui circule librement vers vous. Vous êtes un aimant à prospérité.",
+                        "Visualisez votre vie idéale d'abondance. Voyez-vous vivre dans la joie et la générosité.",
+                        "Chaque respiration vous connecte au flux illimité de richesses de l'univers.",
+                        "Vos talents uniques créent de la valeur. Vous êtes récompensé généreusement pour votre contribution.",
+                        "L'abondance n'est pas seulement financière. Elle est dans vos relations, votre santé, votre créativité.",
+                        "Répétez intérieurement : Je suis ouvert et réceptif à toute la richesse que la vie m'offre.",
+                        "La gratitude multiplie l'abondance. Plus vous appréciez, plus vous recevez.",
+                        "Vous vibrez maintenant à la fréquence de la prospérité. Les opportunités affluent vers vous.",
+                        "Cette abondance est votre état naturel. Vous y retournez maintenant avec confiance et sérénité."
+                    ]
+                }
+            },
+            love: {
+                name: 'Amour Universel',
+                icon: '💗',
+                duration: 480, // 8 minutes
+                desc: 'Ouvrez votre cœur',
+                color: 'rgba(236, 72, 153, 0.2)',
+                borderColor: 'rgba(236, 72, 153, 0.3)',
+                guidance: {
+                    start: "Méditation de l'amour universel. Laissez votre cœur s'ouvrir à l'amour inconditionnel.",
+                    inhale: ["Inspirez l'amour", "Accueillez la tendresse", "Recevez l'affection"],
+                    exhale: ["Expirez l'amour", "Partagez la compassion", "Rayonnez la bienveillance"],
+                    phases: [
+                        "Placez votre main sur votre cœur. Sentez-le battre, fidèle et aimant.",
+                        "Commencez par vous aimer vous-même, profondément et sans condition.",
+                        "Cet amour s'étend maintenant à vos proches. Visualisez-les baignés de lumière rose.",
+                        "Élargissez ce cercle d'amour à vos connaissances, vos collègues, même les inconnus.",
+                        "Incluez maintenant ceux qui vous ont blessé. L'amour guérit toutes les blessures.",
+                        "Votre amour englobe toute l'humanité, tous les êtres vivants de cette planète.",
+                        "Vous êtes amour. C'est votre essence véritable qui rayonne à chaque instant.",
+                        "Cet amour universel vous revient multiplié. Vous êtes aimé au-delà de toute mesure."
+                    ]
+                }
+            },
+            attraction: {
+                name: 'Loi d\'Attraction',
+                icon: '🧲',
+                duration: 420, // 7 minutes
+                desc: 'Manifestez vos désirs',
+                color: 'rgba(139, 92, 246, 0.2)',
+                borderColor: 'rgba(139, 92, 246, 0.3)',
+                guidance: {
+                    start: "Activez la loi d'attraction. Alignez vos vibrations avec vos désirs les plus profonds.",
+                    inhale: ["Inspirez vos désirs", "Attirez le positif", "Magnétisez vos rêves"],
+                    exhale: ["Expirez les doutes", "Libérez les peurs", "Lâchez la résistance"],
+                    phases: [
+                        "Clarifiez votre intention. Qu'est-ce que vous désirez vraiment attirer dans votre vie ?",
+                        "Ressentez maintenant comme si votre désir était déjà réalisé. Vivez cette joie.",
+                        "Votre énergie s'aligne parfaitement avec ce que vous voulez manifester.",
+                        "L'univers conspire en votre faveur. Tout s'organise pour votre plus grand bien.",
+                        "Lâchez le comment. Faites confiance au processus de manifestation.",
+                        "Vous êtes un puissant créateur. Votre réalité se transforme selon vos pensées.",
+                        "La gratitude accélère la manifestation. Remerciez pour ce qui vient."
+                    ]
+                }
+            },
+            confidence: {
+                name: 'Confiance en Soi',
+                icon: '💪',
+                duration: 360, // 6 minutes
+                desc: 'Renforcez votre pouvoir',
+                color: 'rgba(59, 130, 246, 0.2)',
+                borderColor: 'rgba(59, 130, 246, 0.3)',
+                guidance: {
+                    start: "Méditation de la confiance. Reconnectez-vous à votre pouvoir intérieur illimité.",
+                    inhale: ["Inspirez la force", "Accueillez le courage", "Recevez la puissance"],
+                    exhale: ["Expirez les doutes", "Libérez les peurs", "Chassez l'hésitation"],
+                    phases: [
+                        "Vous êtes plus fort que vous ne le pensez. Cette force est en vous maintenant.",
+                        "Rappelez-vous vos succès passés. Vous avez déjà surmonté tant d'obstacles.",
+                        "Votre confiance grandit à chaque respiration. Vous vous tenez droit, ancré.",
+                        "Vous avez tout ce qu'il faut pour réussir. Les ressources sont déjà en vous.",
+                        "Visualisez-vous accomplissant vos objectifs avec aisance et assurance.",
+                        "Cette confiance inébranlable est votre état naturel. Vous y retournez maintenant."
+                    ]
+                }
+            },
+            sleep: {
+                name: 'Sommeil Profond',
+                icon: '😴',
+                duration: 600, // 10 minutes
+                desc: 'Préparez-vous au repos',
+                color: 'rgba(99, 102, 241, 0.2)',
+                borderColor: 'rgba(99, 102, 241, 0.3)',
+                guidance: {
+                    start: "Méditation du sommeil. Préparez votre corps et votre esprit à un repos profond et réparateur.",
+                    inhale: ["Inspirez la détente", "Accueillez la paix", "Invitez le calme"],
+                    exhale: ["Expirez les tensions", "Relâchez la journée", "Lâchez prise"],
+                    phases: [
+                        "La journée est terminée. Vous pouvez maintenant tout relâcher en toute sécurité.",
+                        "Votre lit est un sanctuaire de paix. Vous vous y sentez parfaitement en sécurité.",
+                        "Chaque muscle de votre corps se détend profondément, de la tête aux pieds.",
+                        "Vos pensées ralentissent comme des nuages qui passent dans un ciel nocturne.",
+                        "Votre respiration devient le doux bercement qui vous guide vers le sommeil.",
+                        "Les soucis de la journée se dissolvent. Demain est un autre jour.",
+                        "Vous glissez maintenant dans un sommeil profond et réparateur.",
+                        "Votre subconscient veille sur vous pendant que vous vous reposez.",
+                        "Des rêves paisibles vous attendent dans ce voyage nocturne.",
+                        "Laissez-vous aller... Le sommeil vous accueille avec douceur."
+                    ]
+                }
+            }
+        };
+        
+        let currentMeditation = 'gratitude';
+        
+        // Guidage vocal
+        const voiceGuidance = {
+            sos: {
+                start: "Bienvenue dans votre bulle de calme. Suivez simplement le rythme de la barre.",
+                inhale: ["Inspirez", "Accueillez l'air", "Remplissez"],
+                exhale: ["Soufflez doucement", "Relâchez tout", "Libérez"],
+                phases: [
+                    "Vos pieds touchent le sol. Vous êtes ancré.",
+                    "Le stress s'évapore à chaque souffle.", 
+                    "Vous retrouvez votre centre. Tout va bien."
+                ]
+            },
+            focus: {
+                start: "Préparons votre esprit à la concentration optimale. Respirez avec la barre visuelle.",
+                inhale: ["Inspirez la clarté", "Énergie fraîche", "Focus"],
+                exhale: ["Expirez les distractions", "Lâchez le superflu", "Videz"],
+                phases: [
+                    "Votre esprit devient clair comme du cristal.",
+                    "Chaque respiration affine votre concentration.",
+                    "Vous entrez dans la zone de performance optimale.",
+                    "Concentration laser activée. Vous êtes prêt."
+                ]
+            },
+            recovery: {
+                start: "Moment de régénération profonde. Laissez la barre guider votre souffle.",
+                inhale: ["Énergie nouvelle", "Vitalité", "Force douce"],
+                exhale: ["Tensions dehors", "Repos profond", "Paix"],
+                phases: [
+                    "Chaque cellule de votre corps se régénère.",
+                    "Une vague de bien-être vous traverse.",
+                    "Votre énergie se renouvelle naturellement.",
+                    "Vous êtes complètement ressourcé."
+                ]
+            },
+            transition: {
+                start: "Transition en douceur vers votre prochaine activité. Respirez naturellement.",
+                inhale: ["Nouveau chapitre", "Accueil", "Ouverture"],
+                exhale: ["Lâcher l'ancien", "Fluidité", "Libération"],
+                phases: [
+                    "Entre ce qui était et ce qui vient, vous trouvez l'équilibre.",
+                    "Vous surfez avec aisance sur le changement.",
+                    "Parfaitement préparé pour la suite."
+                ]
+            },
+            scan: {
+                start: "Scan corporel en cohérence 5/5. Installez-vous confortablement, fermez les yeux si vous le souhaitez.",
+                inhale: ["Inspirez 5", "Accueillez", "Remplissez"],
+                exhale: ["Expirez 5", "Relâchez", "Détendez"],
+                phases: [
+                    "Portez votre attention sur le sommet de votre tête. Relâchez toute tension.",
+                    "Descendez vers votre visage et vos épaules. Laissez-les se détendre complètement.",
+                    "Sentez votre poitrine s'ouvrir et se détendre à chaque respiration.",
+                    "Votre ventre se gonfle et se dégonfle naturellement, sans effort.",
+                    "Relâchez vos hanches et tout votre bassin.",
+                    "Vos cuisses et vos genoux se détendent profondément.",
+                    "Vos mollets et vos chevilles se relâchent complètement.",
+                    "Vos pieds sont lourds et complètement détendus.",
+                    "Une vague de bien-être parcourt tout votre corps de la tête aux pieds.",
+                    "Vous êtes complètement détendu. Savourez cette sensation de paix profonde."
+                ]
+            },
+            meditation: null // Sera défini dynamiquement selon le thème choisi
+        };
+        
+        // Configuration voix
+        let voiceConfig = {
+            rate: 0.9,     // Vitesse légèrement ralentie
+            pitch: 0.95,   // Ton légèrement plus grave
+            volume: 0.7,   // Volume modéré
+            lang: 'fr-FR'  // Français
+        };
+        
+        // Classe de gestion audio pour sons binauraux
+        class AudioManager {
+            constructor() {
+                this.isPlaying = false;
+                this.oscillatorLeft = null;
+                this.oscillatorRight = null;
+                this.gainNode = null;
+                this.volume = musicVolume || 0.3;
+                
+                this.frequencies = {
+                    '528hz': { base: 528, beat: 6, name: 'Amour & Guérison' },
+                    '432hz': { base: 432, beat: 8, name: 'Harmonie Naturelle' },
+                    '396hz': { base: 396, beat: 5, name: 'Libération' },
+                    '639hz': { base: 639, beat: 7, name: 'Relations' },
+                    'theta': { base: 200, beat: 4, name: 'Ondes Theta' },
+                    'alpha': { base: 300, beat: 10, name: 'Ondes Alpha' },
+                    'coherence': { base: 256, beat: 0.1, name: 'Cohérence 0.1Hz' }
+                };
+            }
+            
+            async start(frequency = '528hz') {
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                
+                if (this.isPlaying) {
+                    this.stop();
+                }
+                
+                const freq = this.frequencies[frequency];
+                if (!freq) return;
+                
+                // Créer les oscillateurs
+                this.oscillatorLeft = audioContext.createOscillator();
+                this.oscillatorRight = audioContext.createOscillator();
+                
+                this.oscillatorLeft.type = 'sine';
+                this.oscillatorRight.type = 'sine';
+                
+                this.oscillatorLeft.frequency.value = freq.base;
+                this.oscillatorRight.frequency.value = freq.base + freq.beat;
+                
+                // Créer les nœuds de gain et de panoramique
+                this.gainNode = audioContext.createGain();
+                this.gainNode.gain.value = this.volume;
+                
+                const pannerLeft = audioContext.createStereoPanner();
+                const pannerRight = audioContext.createStereoPanner();
+                pannerLeft.pan.value = -1;
+                pannerRight.pan.value = 1;
+                
+                // Connexions
+                this.oscillatorLeft.connect(pannerLeft);
+                this.oscillatorRight.connect(pannerRight);
+                pannerLeft.connect(this.gainNode);
+                pannerRight.connect(this.gainNode);
+                this.gainNode.connect(audioContext.destination);
+                
+                // Démarrer avec un fondu
+                this.gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                this.gainNode.gain.linearRampToValueAtTime(this.volume, audioContext.currentTime + 2);
+                
+                this.oscillatorLeft.start();
+                this.oscillatorRight.start();
+                this.isPlaying = true;
+            }
+            
+            stop() {
+                if (this.isPlaying && this.oscillatorLeft && this.oscillatorRight) {
+                    const now = audioContext.currentTime;
+                    this.gainNode.gain.linearRampToValueAtTime(0, now + 1);
+                    
+                    setTimeout(() => {
+                        this.oscillatorLeft.stop();
+                        this.oscillatorRight.stop();
+                        this.oscillatorLeft = null;
+                        this.oscillatorRight = null;
+                        this.isPlaying = false;
+                    }, 1000);
+                }
+            }
+            
+            setVolume(value) {
+                this.volume = value;
+                if (this.gainNode && this.isPlaying) {
+                    this.gainNode.gain.linearRampToValueAtTime(value, audioContext.currentTime + 0.1);
+                }
+            }
+            
+            changeFrequency(freq) {
+                if (this.isPlaying) {
+                    this.stop();
+                    setTimeout(() => this.start(freq), 1100);
+                }
+            }
+        }
+        
+        // Instance du gestionnaire audio
+        const audioManager = new AudioManager();
+        
+        // Toggle Menu
+        function toggleMenu() {
+            menuOpen = !menuOpen;
+            const panel = document.getElementById('sidePanel');
+            const overlay = document.getElementById('overlay');
+            
+            if (menuOpen) {
+                panel.classList.add('open');
+                overlay.classList.add('active');
+            } else {
+                panel.classList.remove('open');
+                overlay.classList.remove('active');
+            }
+        }
+        
+        // Toggle Zen Mode
+        function toggleZenMode() {
+            zenMode = !zenMode;
+            const toggle = document.getElementById('zenToggle');
+            const sessionScreen = document.getElementById('sessionScreen');
+            
+            if (zenMode) {
+                toggle.classList.add('active');
+                toggle.innerHTML = '👁️ Mode Normal';
+                sessionScreen.classList.add('zen-mode');
+            } else {
+                toggle.classList.remove('active');
+                toggle.innerHTML = '👁️ Mode Zen';
+                sessionScreen.classList.remove('zen-mode');
+            }
+        }
+        
+        // Toggle Detection Mode
+        function toggleDetectionMode() {
+            detectionMode = detectionMode === 'camera' ? 'simulation' : 'camera';
+            const toggle = document.getElementById('cameraToggle');
+            toggle.classList.toggle('active');
+        }
+        
+        // Toggle Adaptive
+        function toggleAdaptive() {
+            adaptiveMode = !adaptiveMode;
+            const toggle = document.getElementById('adaptiveToggle');
+            const modeButtons = document.querySelectorAll('.mode-btn');
+            const breathRateCard = document.getElementById('breathRateCard');
+            
+            toggle.classList.toggle('active');
+            
+            if (adaptiveMode) {
+                breathRateCard.classList.add('adaptive-active');
+                modeButtons.forEach(btn => {
+                    btn.disabled = true;
+                });
+            } else {
+                breathRateCard.classList.remove('adaptive-active');
+                modeButtons.forEach(btn => {
+                    btn.disabled = false;
+                });
+            }
+        }
+        
+        // Toggle Audio
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            const toggle = document.getElementById('audioToggle');
+            toggle.classList.toggle('active');
+        }
+        
+        // Set breathing mode
+        function setBreathingMode(mode) {
+            if (adaptiveMode) return;
+            
+            currentBreathingMode = mode;
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(`modeBtn-${mode}`).classList.add('active');
+        }
+        
+        // Start quick session
+        function startQuickSession() {
+            startSession('focus');
+        }
+        
+        // Start session
+        function startSession(type) {
+            currentSession = type;
+            timeRemaining = sessions[type].duration;
+            totalDuration = sessions[type].duration;
+            
+            // Gestion spéciale pour les méditations thématiques
+            if (type === 'meditation' && currentMeditation) {
+                const meditation = thematicMeditations[currentMeditation];
+                document.getElementById('sessionTitle').innerHTML = `<span style="font-size: 20px;">${meditation.icon}</span> ${meditation.name}`;
+                document.getElementById('sessionDesc').textContent = meditation.desc;
+                
+                // Sélectionner automatiquement une fréquence appropriée
+                const frequencyMap = {
+                    gratitude: '528hz',
+                    abundance: '528hz',
+                    love: '639hz',
+                    attraction: '432hz',
+                    confidence: 'alpha',
+                    sleep: 'theta'
+                };
+                currentFrequency = frequencyMap[currentMeditation] || '528hz';
+                document.getElementById('frequencySelect').value = currentFrequency;
+            } else {
+                document.getElementById('sessionTitle').textContent = sessions[type].name;
+                document.getElementById('sessionDesc').textContent = sessions[type].desc;
+            }
+            
+            document.getElementById('timer').textContent = formatTime(timeRemaining);
+            document.getElementById('progressFill').style.width = '0%';
+            
+            // Reset de la barre de respiration
+            document.getElementById('breathingBarFill').style.width = '0%';
+            document.getElementById('breathingCounter').textContent = '--';
+            
+            // Désactiver le mode adaptatif pour le scan corporel et les méditations
+            if ((type === 'scan' || type === 'meditation') && adaptiveMode) {
+                toggleAdaptive();
+            }
+            
+            // Mettre à jour le rythme respiratoire affiché
+            if (type === 'scan' || type === 'meditation') {
+                document.getElementById('breathRate').textContent = '6.0';
+                document.getElementById('breathRateCard').style.background = 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(168, 85, 247, 0.2))';
+                document.getElementById('breathRateCard').style.border = '1px solid rgba(139, 92, 246, 0.3)';
+                breathingRate = 6.0;
+                // Désactiver temporairement les boutons de mode
+                document.querySelectorAll('.mode-btn').forEach(btn => {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.5';
+                });
+            } else {
+                document.getElementById('breathRateCard').style.background = '';
+                document.getElementById('breathRateCard').style.border = '';
+                // Réactiver les boutons de mode
+                document.querySelectorAll('.mode-btn').forEach(btn => {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                });
+                // Rythme par défaut selon le mode
+                const rates = { beginner: 8.5, intermediate: 6.0, advanced: 5.0 };
+                breathingRate = rates[currentBreathingMode] || 6.0;
+                document.getElementById('breathRate').textContent = breathingRate.toFixed(1);
+            }
+            
+            showScreen('sessionScreen');
+            
+            if (detectionMode === 'camera') {
+                document.getElementById('cameraInstruction').style.display = 'block';
+            }
+        }
+        
+        // Toggle session play/pause
+        function toggleSession() {
+            if (!isActive) {
+                isActive = true;
+                document.getElementById('playBtn').innerHTML = '⏸️ Pause';
+                document.getElementById('meditationCard').style.display = 'block';
+                
+                // Démarrer les sons binauraux si activés
+                if (audioEnabled) {
+                    audioManager.start(currentFrequency);
+                }
+                
+                // Démarrer avec le message vocal
+                const guidance = voiceGuidance[currentSession] || voiceGuidance.focus;
+                speak(guidance.start, true);
+                
+                setTimeout(() => {
+                    startTimer();
+                    startBreathingAnimation();
+                }, 2000); // Attendre la fin du message d'intro
+            } else {
+                isActive = false;
+                document.getElementById('playBtn').innerHTML = '▶️ Reprendre';
+                clearInterval(sessionTimer);
+                if (breathingAnimation) {
+                    cancelAnimationFrame(breathingAnimation);
+                    breathingAnimation = null;
+                }
+                stopSpeaking();
+                
+                // Arrêter les sons binauraux
+                audioManager.stop();
+            }
+        }
+        
+        // Start timer
+        function startTimer() {
+            sessionTimer = setInterval(() => {
+                if (timeRemaining > 0) {
+                    timeRemaining--;
+                    document.getElementById('timer').textContent = formatTime(timeRemaining);
+                    
+                    const progress = ((totalDuration - timeRemaining) / totalDuration) * 100;
+                    document.getElementById('progressFill').style.width = progress + '%';
+                    
+                    simulateBiometrics();
+                    updateGuidance();
+                } else {
+                    completeSession();
+                }
+            }, 1000);
+        }
+        
+        // Start breathing animation
+        function startBreathingAnimation() {
+            const breathingModes = {
+                beginner: { inhale: 3, exhale: 4, rpm: 8.5 },
+                intermediate: { inhale: 4, exhale: 6, rpm: 6.0 },
+                advanced: { inhale: 5, exhale: 7, rpm: 5.0 },
+                scan: { inhale: 5, exhale: 5, rpm: 6.0 }, // Mode spécial pour scan corporel
+                meditation: { inhale: 5, exhale: 5, rpm: 6.0 } // Mode spécial pour méditations
+            };
+            
+            // Utiliser le mode approprié
+            let mode;
+            if (currentSession === 'scan') {
+                mode = breathingModes.scan;
+                breathingRate = 6.0;
+            } else if (currentSession === 'meditation') {
+                mode = breathingModes.meditation;
+                breathingRate = 6.0;
+            } else {
+                mode = breathingModes[currentBreathingMode] || breathingModes.intermediate;
+            }
+            
+            // S'assurer que mode existe
+            if (!mode) {
+                console.error('Mode respiratoire non trouvé:', currentBreathingMode);
+                mode = breathingModes.intermediate;
+            }
+            
+            const totalCycle = mode.inhale + mode.exhale;
+            
+            let startTime = null;
+            let lastPhase = null;
+            let cycleCount = 0;
+            let inhaleIndex = 0;
+            let exhaleIndex = 0;
+            let lastPhaseGuidanceIndex = -1;
+            
+            const barFill = document.getElementById('breathingBarFill');
+            const counter = document.getElementById('breathingCounter');
+            const emoji = document.getElementById('breathEmoji');
+            const instruction = document.getElementById('breathInstruction');
+            const phaseIndicators = document.querySelectorAll('.phase-indicator');
+            
+            // Récupérer le guidage pour la session actuelle
+            let guidance = voiceGuidance[currentSession];
+            
+            // Pour les méditations thématiques, s'assurer que le guidage est défini
+            if (currentSession === 'meditation' && !guidance) {
+                guidance = voiceGuidance.meditation || {
+                    start: "Méditation guidée",
+                    inhale: ["Inspirez", "Accueillez", "Recevez"],
+                    exhale: ["Expirez", "Relâchez", "Libérez"],
+                    phases: ["Respirez en conscience"]
+                };
+            }
+            
+            // Initialiser le contexte audio dès le début si nécessaire
+            if (!audioContext && (gongEnabled || audioEnabled)) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            function animate(timestamp) {
+                if (!isActive) {
+                    return;
+                }
+                
+                if (!startTime) startTime = timestamp;
+                const elapsed = (timestamp - startTime) / 1000;
+                const cycleTime = elapsed % totalCycle;
+                
+                let progress, width, timeRemaining, currentPhase;
+                
+                // Compteur de cycles en début de fonction
+                if (cycleTime < 0.1 && elapsed > 1) {
+                    cycleCount++;
+                }
+                
+                if (cycleTime < mode.inhale) {
+                    // Phase d'inspiration
+                    currentPhase = 'inhale';
+                    progress = cycleTime / mode.inhale;
+                    width = progress * 100;
+                    timeRemaining = Math.ceil(mode.inhale - cycleTime);
+                    
+                    barFill.className = 'breathing-bar-fill inhale';
+                    emoji.textContent = '🌬️';
+                    instruction.textContent = 'Inspirez';
+                    
+                    phaseIndicators[0].classList.add('active');
+                    phaseIndicators[1].classList.remove('active');
+                    
+                    // Gong au début de l'inspiration
+                    if (lastPhase !== 'inhale') {
+                        playGong('inhale');
+                        
+                        // Animation visuelle du gong
+                        const bar = document.querySelector('.breathing-bar');
+                        bar.classList.add('gong-pulse');
+                        setTimeout(() => bar.classList.remove('gong-pulse'), 800);
+                        
+                        // Voix au début de l'inspiration (toutes les 3 respirations)
+                        if (voiceEnabled && guidance && cycleCount % 3 === 0) {
+                            const inhaleText = guidance.inhale[inhaleIndex % guidance.inhale.length];
+                            setTimeout(() => speak(inhaleText), 200); // Légèrement après le gong
+                            inhaleIndex++;
+                        }
+                    }
+                } else {
+                    // Phase d'expiration
+                    currentPhase = 'exhale';
+                    progress = (cycleTime - mode.inhale) / mode.exhale;
+                    width = 100 - (progress * 100);
+                    timeRemaining = Math.ceil(totalCycle - cycleTime);
+                    
+                    barFill.className = 'breathing-bar-fill exhale';
+                    emoji.textContent = '🍃';
+                    instruction.textContent = 'Expirez';
+                    
+                    phaseIndicators[0].classList.remove('active');
+                    phaseIndicators[1].classList.add('active');
+                    
+                    // Gong au début de l'expiration
+                    if (lastPhase !== 'exhale') {
+                        playGong('exhale');
+                        
+                        // Animation visuelle du gong
+                        const bar = document.querySelector('.breathing-bar');
+                        bar.classList.add('gong-pulse');
+                        setTimeout(() => bar.classList.remove('gong-pulse'), 800);
+                        
+                        // Voix au début de l'expiration (toutes les 3 respirations, décalé)
+                        if (voiceEnabled && guidance && (cycleCount + 1) % 3 === 0) {
+                            const exhaleText = guidance.exhale[exhaleIndex % guidance.exhale.length];
+                            setTimeout(() => speak(exhaleText), 200); // Légèrement après le gong
+                            exhaleIndex++;
+                        }
+                    }
+                }
+                
+                lastPhase = currentPhase;
+                barFill.style.width = width + '%';
+                counter.textContent = timeRemaining;
+                
+                // Guidance de phase à des moments spécifiques
+                if (voiceEnabled && guidance && elapsed > 10) {
+                    if (currentSession === 'scan') {
+                        // Pour le scan corporel, changer de zone toutes les 60 secondes
+                        const zoneIndex = Math.floor((elapsed - 10) / 60);
+                        if (zoneIndex !== lastPhaseGuidanceIndex && zoneIndex < guidance.phases.length && cycleTime < 0.2) {
+                            lastPhaseGuidanceIndex = zoneIndex;
+                            setTimeout(() => {
+                                speak(guidance.phases[zoneIndex], true);
+                            }, 2000);
+                        }
+                    } else if (currentSession === 'meditation') {
+                        // Pour les méditations thématiques, répartir les phases sur la durée totale
+                        const phaseInterval = (totalDuration - 10) / guidance.phases.length;
+                        const currentPhaseIndex = Math.floor((elapsed - 10) / phaseInterval);
+                        if (currentPhaseIndex !== lastPhaseGuidanceIndex && currentPhaseIndex < guidance.phases.length && cycleTime < 0.2) {
+                            lastPhaseGuidanceIndex = currentPhaseIndex;
+                            setTimeout(() => {
+                                speak(guidance.phases[currentPhaseIndex], true);
+                            }, 2000);
+                        }
+                    } else {
+                        // Pour les autres sessions
+                        const currentPhaseIndex = Math.floor((elapsed / totalDuration) * guidance.phases.length);
+                        if (currentPhaseIndex !== lastPhaseGuidanceIndex && currentPhaseIndex < guidance.phases.length && cycleTime < 0.2) {
+                            lastPhaseGuidanceIndex = currentPhaseIndex;
+                            setTimeout(() => {
+                                speak(guidance.phases[currentPhaseIndex], true);
+                            }, 2000);
+                        }
+                    }
+                }
+                
+                breathingAnimation = requestAnimationFrame(animate);
+            }
+            
+            breathingAnimation = requestAnimationFrame(animate);
+        }
+        
+        // Simulate biometrics
+        function simulateBiometrics() {
+            const time = Date.now() / 1000;
+            const breathCycle = (time * 6) / 60;
+            
+            heartRate = Math.round(70 + Math.sin(breathCycle * 2 * Math.PI) * 5 + Math.random() * 3);
+            hrv = Math.round(45 + Math.sin(time / 10) * 15 + Math.random() * 5);
+            coherence = Math.round(Math.max(0, Math.min(100, 70 + Math.sin(breathCycle * Math.PI) * 20)));
+            
+            document.getElementById('heartRate').textContent = heartRate;
+            document.getElementById('hrv').textContent = hrv;
+            document.getElementById('coherence').textContent = coherence;
+        }
+        
+        // Update guidance
+        function updateGuidance() {
+            const progress = 1 - (timeRemaining / totalDuration);
+            const guidance = voiceGuidance[currentSession];
+            
+            if (!guidance) return;
+            
+            if (currentSession === 'scan') {
+                // Pour le scan corporel, afficher la zone actuelle
+                const zoneIndex = Math.min(Math.floor(progress * guidance.phases.length), guidance.phases.length - 1);
+                const currentText = guidance.phases[zoneIndex];
+                document.getElementById('meditationText').textContent = `"${currentText}"`;
+            } else if (currentSession === 'meditation') {
+                // Pour les méditations thématiques
+                const phaseIndex = Math.min(Math.floor(progress * guidance.phases.length), guidance.phases.length - 1);
+                const currentText = guidance.phases[phaseIndex];
+                document.getElementById('meditationText').textContent = `"${currentText}"`;
+            } else {
+                // Pour les autres sessions
+                let phaseIndex = 0;
+                if (progress > 0.25) phaseIndex = 1;
+                if (progress > 0.5) phaseIndex = 2;
+                if (progress > 0.75) phaseIndex = Math.min(3, guidance.phases.length - 1);
+                
+                const currentText = guidance.phases[Math.min(phaseIndex, guidance.phases.length - 1)];
+                document.getElementById('meditationText').textContent = `"${currentText}"`;
+            }
+        }
+        
+        // Complete session
+        function completeSession() {
+            isActive = false;
+            clearInterval(sessionTimer);
+            if (breathingAnimation) {
+                cancelAnimationFrame(breathingAnimation);
+            }
+            
+            // Arrêter les sons binauraux
+            audioManager.stop();
+            
+            // Message vocal de fin personnalisé
+            const endMessages = {
+                sos: "Bravo. Vous avez retrouvé votre calme. Gardez cette sérénité avec vous.",
+                focus: "Excellente session. Votre esprit est maintenant affûté et prêt.",
+                recovery: "Magnifique. Vous êtes complètement rechargé en énergie positive.",
+                transition: "Parfait. Vous êtes maintenant prêt pour votre prochaine activité.",
+                scan: "Scan corporel terminé. Votre corps est complètement détendu et votre esprit apaisé.",
+                meditation: getMeditationEndMessage()
+            };
+            
+            speak(endMessages[currentSession] || "Session terminée. Félicitations.", true);
+            
+            document.getElementById('finalCoherence').textContent = coherence + '%';
+            document.getElementById('finalDuration').textContent = formatTime(totalDuration);
+            document.getElementById('finalBreathRate').textContent = breathingRate.toFixed(1);
+            document.getElementById('finalHR').textContent = heartRate || '--';
+            
+            setTimeout(() => {
+                showScreen('resultsScreen');
+            }, 3500);
+        }
+        
+        // Obtenir le message de fin pour les méditations thématiques
+        function getMeditationEndMessage() {
+            const messages = {
+                gratitude: "Magnifique méditation. La gratitude continue de rayonner en vous.",
+                abundance: "L'abondance est maintenant activée dans votre vie. Restez ouvert aux opportunités.",
+                love: "Votre cœur est grand ouvert. L'amour que vous avez partagé vous revient multiplié.",
+                attraction: "Vos vibrations sont alignées. La manifestation est en cours.",
+                confidence: "Votre confiance est restaurée. Vous êtes prêt à conquérir le monde.",
+                sleep: "Vous êtes maintenant parfaitement préparé pour un sommeil profond et réparateur."
+            };
+            
+            return messages[currentMeditation] || "Méditation complétée. Vous rayonnez de paix intérieure.";
+        }
+        
+        // Navigation
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+        
+        function goHome() {
+            resetSession();
+            showScreen('homeScreen');
+        }
+        
+        function resetSession() {
+            isActive = false;
+            clearInterval(sessionTimer);
+            if (breathingAnimation) {
+                cancelAnimationFrame(breathingAnimation);
+                breathingAnimation = null;
+            }
+            stopSpeaking();
+            
+            // Arrêter les sons binauraux
+            audioManager.stop();
+            
+            document.getElementById('playBtn').innerHTML = '▶️ Commencer';
+            document.getElementById('meditationCard').style.display = 'none';
+            
+            // Reset des valeurs
+            document.getElementById('heartRate').textContent = '--';
+            document.getElementById('hrv').textContent = '--';
+            document.getElementById('coherence').textContent = '0';
+            document.getElementById('breathingBarFill').style.width = '0%';
+            document.getElementById('breathingCounter').textContent = '--';
+        }
+        
+        // Fonction de synthèse vocale
+        function speak(text, priority = false) {
+            if (!voiceEnabled || !speechSynth) return;
+            
+            // Si prioritaire, arrêter ce qui est en cours
+            if (priority && speechSynth.speaking) {
+                speechSynth.cancel();
+            }
+            
+            // Créer l'utterance
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            currentUtterance.rate = voiceConfig.rate;
+            currentUtterance.pitch = voiceConfig.pitch;
+            currentUtterance.volume = voiceConfig.volume;
+            currentUtterance.lang = voiceConfig.lang;
+            
+            // Sélectionner une voix française si disponible
+            const voices = speechSynth.getVoices();
+            const frenchVoice = voices.find(voice => voice.lang.startsWith('fr'));
+            if (frenchVoice) {
+                currentUtterance.voice = frenchVoice;
+            }
+            
+            speechSynth.speak(currentUtterance);
+        }
+        
+        // Arrêter la voix
+        function stopSpeaking() {
+            if (speechSynth && speechSynth.speaking) {
+                speechSynth.cancel();
+            }
+        }
+        
+        // Toggle voix
+        function toggleVoice() {
+            voiceEnabled = !voiceEnabled;
+            const toggle = document.getElementById('voiceToggle');
+            toggle.classList.toggle('active');
+            
+            if (!voiceEnabled) {
+                stopSpeaking();
+            }
+        }
+        
+        // Fonction pour créer le son du gong
+        function playGong(type = 'soft') {
+            if (!gongEnabled || !audioContext) {
+                // Créer le contexte audio si nécessaire
+                if (!audioContext && gongEnabled) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (!gongEnabled) return;
+            }
+            
+            const now = audioContext.currentTime;
+            
+            // Créer plusieurs oscillateurs pour un son plus riche
+            const osc1 = audioContext.createOscillator();
+            const osc2 = audioContext.createOscillator();
+            const osc3 = audioContext.createOscillator();
+            
+            const gainNode = audioContext.createGain();
+            const filter = audioContext.createBiquadFilter();
+            const compressor = audioContext.createDynamicsCompressor();
+            
+            // Configuration du compresseur pour un son plus doux
+            compressor.threshold.setValueAtTime(-24, now);
+            compressor.knee.setValueAtTime(30, now);
+            compressor.ratio.setValueAtTime(12, now);
+            compressor.attack.setValueAtTime(0, now);
+            compressor.release.setValueAtTime(0.25, now);
+            
+            // Créer une réverbération simple avec un delay
+            const delay = audioContext.createDelay();
+            const delayGain = audioContext.createGain();
+            delay.delayTime.value = 0.1;
+            delayGain.gain.value = 0.25;
+            
+            // Fréquences différentes pour inspire/expire
+            let baseFreq;
+            if (type === 'inhale') {
+                baseFreq = 261.63; // Do4 - Note plus claire pour l'inspiration
+            } else {
+                baseFreq = 196.00; // Sol3 - Note plus grave pour l'expiration
+            }
+            
+            // Configuration des oscillateurs
+            osc1.frequency.setValueAtTime(baseFreq, now);
+            osc2.frequency.setValueAtTime(baseFreq * 0.5, now); // Octave inférieure
+            osc3.frequency.setValueAtTime(baseFreq * 1.5, now); // Quinte
+            
+            osc1.type = 'sine';
+            osc2.type = 'sine';
+            osc3.type = 'sine';
+            
+            // Configuration du filtre pour adoucir le son
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(1200, now);
+            filter.Q.setValueAtTime(2, now);
+            
+            // Modulation légère de la fréquence pour un effet plus organique
+            filter.frequency.exponentialRampToValueAtTime(600, now + 2.5);
+            
+            // Enveloppe ADSR douce
+            const maxVolume = gongVolume * 0.25; // Volume max basé sur le réglage global
+            gainNode.gain.setValueAtTime(0, now);
+            gainNode.gain.linearRampToValueAtTime(maxVolume, now + 0.03); // Attaque douce
+            gainNode.gain.linearRampToValueAtTime(maxVolume * 0.75, now + 0.15); // Decay
+            gainNode.gain.exponentialRampToValueAtTime(0.01, now + 2.0); // Release long
+            
+            // Enveloppe pour la réverbération
+            delayGain.gain.setValueAtTime(0, now);
+            delayGain.gain.linearRampToValueAtTime(0.15 * gongVolume, now + 0.1);
+            delayGain.gain.exponentialRampToValueAtTime(0.01, now + 3.0);
+            
+            // Connexions
+            osc1.connect(filter);
+            osc2.connect(filter);
+            osc3.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(compressor);
+            compressor.connect(audioContext.destination);
+            
+            // Connexion de la réverbération
+            filter.connect(delay);
+            delay.connect(delayGain);
+            delayGain.connect(compressor);
+            
+            // Démarrer et programmer l'arrêt
+            osc1.start(now);
+            osc2.start(now);
+            osc3.start(now);
+            osc1.stop(now + 3);
+            osc2.stop(now + 3);
+            osc3.stop(now + 3);
+        }
+        
+        // Toggle gong
+        function toggleGong() {
+            gongEnabled = !gongEnabled;
+            const toggle = document.getElementById('gongToggle');
+            toggle.classList.toggle('active');
+        }
+        
+        // Utilities
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        function updateVolume(value) {
+            musicVolume = value / 100;
+            audioManager.setVolume(musicVolume);
+        }
+        
+        function updateVoiceVolume(value) {
+            if (voiceConfig) {
+                voiceConfig.volume = value / 100;
+            }
+        }
+        
+        function updateGongVolume(value) {
+            gongVolume = value / 100;
+        }
+        
+        function changeFrequency(value) {
+            currentFrequency = value;
+            if (audioEnabled && audioManager.isPlaying) {
+                audioManager.changeFrequency(value);
+            }
+        }
+        
+        // Test du gong
+        function testGong() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            // Premier gong (inspire)
+            playGong('inhale');
+            console.log('🔔 Gong inspiration (Do4) - Volume: ' + (gongVolume * 100) + '%');
+            
+            // Deuxième gong (expire) après 1.5 secondes
+            setTimeout(() => {
+                playGong('exhale');
+                console.log('🔔 Gong expiration (Sol3) - Volume: ' + (gongVolume * 100) + '%');
+            }, 1500);
+        }
+        
+        // Test des sons binauraux
+        function testBinaural() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            if (!audioManager.isPlaying) {
+                audioManager.start(currentFrequency);
+                console.log('🎵 Sons binauraux démarrés - Fréquence: ' + currentFrequency + ', Volume: ' + (musicVolume * 100) + '%');
+                
+                // Arrêter après 5 secondes
+                setTimeout(() => {
+                    audioManager.stop();
+                    console.log('🎵 Sons binauraux arrêtés');
+                }, 5000);
+            } else {
+                audioManager.stop();
+                console.log('🎵 Sons binauraux arrêtés');
+            }
+        }
+        
+        // Afficher la sélection des méditations
+        function showMeditationSelection() {
+            const grid = document.getElementById('meditationGrid');
+            grid.innerHTML = '';
+            
+            // Créer les cartes de méditation
+            Object.entries(thematicMeditations).forEach(([key, meditation]) => {
+                const card = document.createElement('div');
+                card.className = 'session-card-mini';
+                card.style.background = meditation.color;
+                card.style.border = `1px solid ${meditation.borderColor}`;
+                card.style.cursor = 'pointer';
+                card.onclick = () => startMeditation(key);
+                
+                card.innerHTML = `
+                    <div class="session-icon">${meditation.icon}</div>
+                    <div class="session-name">${meditation.name}</div>
+                    <div class="session-time">${Math.floor(meditation.duration / 60)}min • ${meditation.desc}</div>
+                `;
+                
+                grid.appendChild(card);
+            });
+            
+            showScreen('meditationSelectionScreen');
+        }
+        
+        // Démarrer une méditation thématique
+        function startMeditation(theme) {
+            currentMeditation = theme;
+            const meditation = thematicMeditations[theme];
+            
+            // Configurer la session
+            currentSession = 'meditation';
+            sessions.meditation.duration = meditation.duration;
+            sessions.meditation.name = meditation.name;
+            sessions.meditation.desc = meditation.desc;
+            
+            // Configurer le guidage vocal
+            voiceGuidance.meditation = meditation.guidance;
+            
+            // Démarrer la session
+            startSession('meditation');
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🧘 MediRelax - Cohérence cardiaque avec méditation guidée');
+            console.log('🔔 Gong respiratoire : Do4 (↑inspire) → Sol3 (↓expire)');
+            console.log('🧘‍♂️ Scan Corporel : 10 min de relaxation profonde');
+            console.log('✨ Méditations Thématiques - 6 thèmes disponibles');
+            console.log('  🙏 Gratitude (5min) | 💰 Abondance (10min) | 💗 Amour (8min)');
+            console.log('  🧲 Attraction (7min) | 💪 Confiance (6min) | 😴 Sommeil (10min)');
+            console.log('🎧 Pour une expérience optimale, utilisez des écouteurs');
+            console.log('💡 Astuce : Fermez les yeux et laissez-vous guider par les sons');
+            console.log('🔧 Volumes : Gong=' + (gongVolume*100) + '%, Musique=' + (musicVolume*100) + '%, Voix=' + (voiceConfig.volume*100) + '%');
+            
+            // Initialiser les valeurs des sliders
+            document.getElementById('gongVolumeSlider').value = gongVolume * 100;
+            document.getElementById('volumeSlider').value = musicVolume * 100;
+            document.getElementById('voiceVolumeSlider').value = voiceConfig.volume * 100;
+            
+            // Charger les voix disponibles
+            if (speechSynth) {
+                speechSynth.addEventListener('voiceschanged', () => {
+                    const voices = speechSynth.getVoices();
+                    const frenchVoices = voices.filter(v => v.lang.startsWith('fr'));
+                    console.log(`🗣️ ${frenchVoices.length} voix française(s) disponible(s)`);
+                });
+            }
+            
+            // Test du contexte audio au premier clic
+            document.addEventListener('click', () => {
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    console.log('🎵 Audio activé - Les réglages de volume sont maintenant opérationnels');
+                }
+            }, { once: true });
+            
+            console.log('📝 Note développeur : Pour ajouter une nouvelle méditation thématique :');
+            console.log('  1. Ajouter dans l\'objet thematicMeditations');
+            console.log('  2. Définir : name, icon, duration, desc, color, borderColor, guidance');
+            console.log('  3. La nouvelle méditation apparaîtra automatiquement dans la liste !');
+        });
+    </script>
+</body>
+</html>
