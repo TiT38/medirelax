@@ -7,6 +7,18 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="MediRelax">
     <title>MediRelax - Cohérence Cardiaque</title>
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#1e3a8a">
+    
+    <!-- Icons pour iOS -->
+    <link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-180.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="./icons/icon-152.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="./icons/icon-120.png">
+    
+    <!-- Icon par défaut si les autres ne sont pas disponibles -->
+    <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./icons/icon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./icons/icon-16.png">
     
     <style>
         * {
@@ -1402,10 +1414,52 @@
         // Configuration voix
         let voiceConfig = {
             rate: 0.9,     // Vitesse légèrement ralentie
-            pitch: 0.95,   // Ton légèrement plus grave
+            pitch: 1.0,    // Ton normal (1.0 au lieu de 0.95 pour iOS)
             volume: 0.7,   // Volume modéré
             lang: 'fr-FR'  // Français
         };
+        
+        // Sélection intelligente de la voix
+        let selectedVoice = null;
+        
+        function selectBestVoice() {
+            const voices = speechSynth.getVoices();
+            
+            // Détecter si on est sur iOS
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            
+            if (isIOS) {
+                // Sur iOS, chercher spécifiquement les voix iOS françaises
+                selectedVoice = voices.find(voice => 
+                    voice.lang === 'fr-FR' && 
+                    (voice.name.includes('Thomas') || 
+                     voice.name.includes('Amélie') ||
+                     voice.name.includes('Marie'))
+                );
+                
+                // Si pas trouvé, chercher n'importe quelle voix française
+                if (!selectedVoice) {
+                    selectedVoice = voices.find(voice => voice.lang.startsWith('fr'));
+                }
+                
+                // Ajuster les paramètres pour iOS
+                voiceConfig.rate = 0.85;  // Plus lent sur iOS
+                voiceConfig.pitch = 1.0;  // Pitch normal sur iOS
+            } else {
+                // Sur autres plateformes
+                selectedVoice = voices.find(voice => 
+                    voice.lang === 'fr-FR' && 
+                    !voice.name.includes('Google')  // Éviter les voix Google qui peuvent bugger
+                );
+                
+                if (!selectedVoice) {
+                    selectedVoice = voices.find(voice => voice.lang.startsWith('fr'));
+                }
+            }
+            
+            console.log('Voix sélectionnée:', selectedVoice?.name || 'Voix par défaut');
+            return selectedVoice;
+        }
         
         // Classe de gestion audio pour sons binauraux
         class AudioManager {
@@ -2033,21 +2087,49 @@
                 speechSynth.cancel();
             }
             
+            // Sur iOS, attendre un peu après cancel
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            if (isIOS && priority) {
+                setTimeout(() => speakNow(text), 100);
+            } else {
+                speakNow(text);
+            }
+        }
+        
+        function speakNow(text) {
             // Créer l'utterance
             currentUtterance = new SpeechSynthesisUtterance(text);
+            
+            // Configurer avec les paramètres
             currentUtterance.rate = voiceConfig.rate;
             currentUtterance.pitch = voiceConfig.pitch;
             currentUtterance.volume = voiceConfig.volume;
             currentUtterance.lang = voiceConfig.lang;
             
-            // Sélectionner une voix française si disponible
-            const voices = speechSynth.getVoices();
-            const frenchVoice = voices.find(voice => voice.lang.startsWith('fr'));
-            if (frenchVoice) {
-                currentUtterance.voice = frenchVoice;
+            // Utiliser la voix sélectionnée
+            if (!selectedVoice) {
+                selectedVoice = selectBestVoice();
             }
             
-            speechSynth.speak(currentUtterance);
+            if (selectedVoice) {
+                currentUtterance.voice = selectedVoice;
+            }
+            
+            // Gestion des événements pour debug
+            currentUtterance.onerror = (event) => {
+                console.error('Erreur synthèse vocale:', event);
+            };
+            
+            currentUtterance.onstart = () => {
+                console.log('Début de la synthèse vocale');
+            };
+            
+            // Parler
+            try {
+                speechSynth.speak(currentUtterance);
+            } catch (error) {
+                console.error('Erreur lors de la synthèse vocale:', error);
+            }
         }
         
         // Arrêter la voix
@@ -2298,11 +2380,25 @@
             
             // Charger les voix disponibles
             if (speechSynth) {
+                // Forcer le chargement des voix
+                speechSynth.getVoices();
+                
                 speechSynth.addEventListener('voiceschanged', () => {
                     const voices = speechSynth.getVoices();
                     const frenchVoices = voices.filter(v => v.lang.startsWith('fr'));
                     console.log(`🗣️ ${frenchVoices.length} voix française(s) disponible(s)`);
+                    
+                    // Sélectionner la meilleure voix dès qu'elles sont chargées
+                    selectedVoice = selectBestVoice();
                 });
+                
+                // Sur iOS, forcer le rechargement des voix
+                if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                    setTimeout(() => {
+                        speechSynth.getVoices();
+                        selectedVoice = selectBestVoice();
+                    }, 100);
+                }
             }
             
             // Test du contexte audio au premier clic
@@ -2317,7 +2413,117 @@
             console.log('  1. Ajouter dans l\'objet thematicMeditations');
             console.log('  2. Définir : name, icon, duration, desc, color, borderColor, guidance');
             console.log('  3. La nouvelle méditation apparaîtra automatiquement dans la liste !');
+            
+            // Enregistrer le Service Worker pour la PWA
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('✅ Service Worker enregistré avec succès');
+                        
+                        // Vérifier les mises à jour périodiquement
+                        setInterval(() => {
+                            registration.update();
+                        }, 60000); // Toutes les minutes
+                    })
+                    .catch(error => {
+                        console.log('❌ Erreur Service Worker:', error);
+                    });
+                
+                // Gestionnaire pour l'installation
+                let deferredPrompt;
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    e.preventDefault();
+                    deferredPrompt = e;
+                    
+                    // Afficher un bouton d'installation personnalisé après 30 secondes
+                    setTimeout(() => {
+                        if (deferredPrompt) {
+                            showInstallPrompt();
+                        }
+                    }, 30000);
+                });
+                
+                // Détecter si l'app est installée
+                window.addEventListener('appinstalled', () => {
+                    console.log('✅ MediRelax a été installée avec succès !');
+                    deferredPrompt = null;
+                });
+            }
         });
+        
+        // Fonction pour afficher l'invite d'installation
+        function showInstallPrompt() {
+            const installBanner = document.createElement('div');
+            installBanner.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+                color: white;
+                padding: 20px;
+                border-radius: 16px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+                z-index: 1000;
+                animation: slideUp 0.5s ease-out;
+                font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            `;
+            
+            installBanner.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <div style="font-size: 18px; font-weight: 600; margin-bottom: 5px;">
+                            📲 Installer MediRelax
+                        </div>
+                        <div style="font-size: 14px; opacity: 0.9;">
+                            Ajoutez l'app à votre écran d'accueil pour un accès rapide
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="installPWA()" style="
+                            background: white;
+                            color: #1e3a8a;
+                            border: none;
+                            padding: 10px 20px;
+                            border-radius: 25px;
+                            font-weight: 600;
+                            cursor: pointer;
+                        ">Installer</button>
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" style="
+                            background: rgba(255,255,255,0.2);
+                            color: white;
+                            border: none;
+                            padding: 10px 20px;
+                            border-radius: 25px;
+                            cursor: pointer;
+                        ">Plus tard</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(installBanner);
+            
+            // Supprimer automatiquement après 10 secondes
+            setTimeout(() => {
+                if (installBanner.parentElement) {
+                    installBanner.remove();
+                }
+            }, 10000);
+        }
+        
+        // Fonction d'installation
+        async function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`L'utilisateur a ${outcome === 'accepted' ? 'accepté' : 'refusé'} l'installation`);
+                deferredPrompt = null;
+                
+                // Supprimer la bannière
+                const banner = document.querySelector('[style*="Installer MediRelax"]')?.parentElement?.parentElement;
+                if (banner) banner.remove();
+            }
+        }
     </script>
 </body>
 </html>
