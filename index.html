@@ -279,13 +279,11 @@
         }
         
         .session-card-mini.scan-special {
-            grid-column: 1 / -1;
             background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(168, 85, 247, 0.1));
             border: 1px solid rgba(139, 92, 246, 0.3);
         }
         
         .session-card-mini.meditation-special {
-            grid-column: 1 / -1;
             background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(236, 72, 153, 0.1));
             border: 1px solid rgba(251, 191, 36, 0.3);
         }
@@ -324,6 +322,7 @@
             padding: 12px 8px;
             text-align: center;
             transition: all 0.2s ease;
+            position: relative;
         }
         
         .metric-card.primary {
@@ -363,6 +362,15 @@
             color: rgba(255,255,255,0.6);
             text-transform: uppercase;
             letter-spacing: 0.5px;
+        }
+        
+        /* Note pour mode caméra désactivé */
+        .camera-inactive-note {
+            font-size: 8px;
+            color: rgba(255,255,255,0.5);
+            text-align: center;
+            margin-top: 2px;
+            font-style: italic;
         }
         
         /* Mode Zen Toggle */
@@ -816,14 +824,7 @@
             <div class="header-left">
                 <div class="logo">MediRelax</div>
                 <div class="subtitle">Cohérence cardiaque adaptative                </div>
-                <div style="margin-top: 10px; padding: 10px; background: rgba(139, 92, 246, 0.1); border-radius: 8px; border: 1px solid rgba(139, 92, 246, 0.3);">
-                    <p style="font-size: 12px; color: rgba(255,255,255,0.8); margin: 0 0 5px 0;">
-                        🧘‍♂️ <strong>Scan Corporel :</strong> 10 minutes de détente profonde avec respiration 5/5 (6 resp/min)
-                    </p>
-                    <p style="font-size: 12px; color: rgba(255,255,255,0.8); margin: 0;">
-                        ✨ <strong>Méditations Thématiques :</strong> 6 thèmes disponibles (Gratitude, Abondance, Amour...) • Facilement extensible
-                    </p>
-                </div>
+
             </div>
             <div class="menu-button" onclick="toggleMenu()">
                 <div class="menu-line"></div>
@@ -836,19 +837,19 @@
         <div class="stats-compact">
             <div class="stats-row">
                 <div class="stat-item">
-                    <div class="stat-value" style="color: #f97316;">3</div>
+                    <div class="stat-value" style="color: #f97316;">0</div>
                     <div class="stat-label">Jours</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value" style="color: #22c55e;">73%</div>
+                    <div class="stat-value" style="color: #22c55e;">0%</div>
                     <div class="stat-label">Cohérence</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value" style="color: #3b82f6;">28</div>
+                    <div class="stat-value" style="color: #3b82f6;">0</div>
                     <div class="stat-label">Sessions</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value" style="color: #8b5cf6;">5.2</div>
+                    <div class="stat-value" style="color: #8b5cf6;">0.0</div>
                     <div class="stat-label">Rythme moy.</div>
                 </div>
             </div>
@@ -873,7 +874,7 @@
                 <div class="session-card-mini" onclick="startSession('focus')">
                     <div class="session-icon">🎯</div>
                     <div class="session-name">Focus</div>
-                    <div class="session-time">4min</div>
+                    <div class="session-time">3min</div>
                 </div>
                 
                 <div class="session-card-mini" onclick="startSession('recovery')">
@@ -891,13 +892,13 @@
                 <div class="session-card-mini scan-special" onclick="startSession('scan')">
                     <div class="session-icon">🧘‍♂️</div>
                     <div class="session-name">Scan Corporel</div>
-                    <div class="session-time">10min • Respiration 5/5 • Relaxation profonde</div>
+                    <div class="session-time">10min</div>
                 </div>
                 
                 <div class="session-card-mini meditation-special" onclick="showMeditationSelection()">
                     <div class="session-icon">✨</div>
-                    <div class="session-name">Méditations Thématiques</div>
-                    <div class="session-time">5-10min • 6 thèmes disponibles • Guidage personnalisé</div>
+                    <div class="session-name">Méditations</div>
+                    <div class="session-time">5-10min</div>
                 </div>
             </div>
         </div>
@@ -918,6 +919,11 @@
                 <div class="toggle-switch" id="cameraToggle" onclick="toggleDetectionMode()">
                     <div class="toggle-thumb"></div>
                 </div>
+            </div>
+            <div style="margin-top: 10px; padding: 8px; background: rgba(255,255,255,0.05); border-radius: 6px;">
+                <p style="font-size: 11px; color: rgba(255,255,255,0.7); margin: 0;">
+                    📸 <strong>Mode Caméra :</strong> Détection réelle du rythme cardiaque via caméra. Sinon, affichage fixe.
+                </p>
             </div>
         </div>
         
@@ -1005,10 +1011,10 @@
         <div class="panel-section">
             <h4 class="panel-section-title">📊 Statistiques détaillées</h4>
             <div class="options-group" style="font-size: 14px; line-height: 1.8;">
-                <div>Sessions totales : <strong>28</strong></div>
-                <div>Temps total : <strong>1h 47min</strong></div>
-                <div>Cohérence moyenne : <strong>73%</strong></div>
-                <div>Meilleure série : <strong>7 jours</strong></div>
+                <div>Sessions totales : <strong>0</strong></div>
+                <div>Temps total : <strong>0h 0min</strong></div>
+                <div>Cohérence moyenne : <strong>0%</strong></div>
+                <div>Meilleure série : <strong>0 jours</strong></div>
             </div>
         </div>
     </div>
@@ -1032,16 +1038,19 @@
                 <div class="metric-icon">❤️</div>
                 <div class="metric-value" id="heartRate">--</div>
                 <div class="metric-label">BPM</div>
+                <div class="camera-inactive-note" id="heartRateNote" style="display: none;">Actif en mode caméra</div>
             </div>
             <div class="metric-card">
                 <div class="metric-icon">📊</div>
                 <div class="metric-value" id="hrv">--</div>
                 <div class="metric-label">HRV</div>
+                <div class="camera-inactive-note" id="hrvNote" style="display: none;">Actif en mode caméra</div>
             </div>
             <div class="metric-card">
                 <div class="metric-icon">🎯</div>
                 <div class="metric-value" id="coherence">0</div>
                 <div class="metric-label">Score</div>
+                <div class="camera-inactive-note" id="coherenceNote" style="display: none;">Actif en mode caméra</div>
             </div>
             <div class="metric-card" id="breathRateCard">
                 <div class="metric-icon">🌬️</div>
@@ -1070,7 +1079,7 @@
                 </div>
             </div>
             
-            <div class="timer" id="timer">4:00</div>
+            <div class="timer" id="timer">3:00</div>
             
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
@@ -1102,11 +1111,11 @@
             
             <div class="results-grid">
                 <div class="result-item">
-                    <div class="result-value" style="color: #22c55e;" id="finalCoherence">75%</div>
+                    <div class="result-value" style="color: #22c55e;" id="finalCoherence">0%</div>
                     <div class="result-label">Cohérence finale</div>
                 </div>
                 <div class="result-item">
-                    <div class="result-value" style="color: #3b82f6;" id="finalDuration">4:00</div>
+                    <div class="result-value" style="color: #3b82f6;" id="finalDuration">3:00</div>
                     <div class="result-label">Durée complète</div>
                 </div>
                 <div class="result-item">
@@ -1114,7 +1123,7 @@
                     <div class="result-label">Rythme final</div>
                 </div>
                 <div class="result-item">
-                    <div class="result-value" style="color: #f59e0b;" id="finalHR">68</div>
+                    <div class="result-value" style="color: #f59e0b;" id="finalHR">--</div>
                     <div class="result-label">FC finale</div>
                 </div>
             </div>
@@ -1180,8 +1189,8 @@
         let currentBreathingMode = 'intermediate';
         let isActive = false;
         let currentSession = 'focus';
-        let timeRemaining = 240;
-        let totalDuration = 240;
+        let timeRemaining = 180;
+        let totalDuration = 180;
         let sessionTimer = null;
         let breathingAnimation = null;
         let coherence = 0;
@@ -1198,7 +1207,7 @@
         
         const sessions = {
             sos: { name: 'SOS Stress', duration: 90, desc: 'Ancrage d\'urgence' },
-            focus: { name: 'Boost Focus', duration: 240, desc: 'Concentration laser' },
+            focus: { name: 'Boost Focus', duration: 180, desc: 'Concentration laser' },
             recovery: { name: 'Récup Express', duration: 300, desc: 'Régénération profonde' },
             transition: { name: 'Transition Fluide', duration: 180, desc: 'Fluidité mentale' },
             scan: { name: 'Scan Corporel', duration: 600, desc: 'Relaxation profonde guidée' },
@@ -1414,52 +1423,10 @@
         // Configuration voix
         let voiceConfig = {
             rate: 0.9,     // Vitesse légèrement ralentie
-            pitch: 1.0,    // Ton normal (1.0 au lieu de 0.95 pour iOS)
+            pitch: 0.95,   // Ton légèrement plus grave
             volume: 0.7,   // Volume modéré
             lang: 'fr-FR'  // Français
         };
-        
-        // Sélection intelligente de la voix
-        let selectedVoice = null;
-        
-        function selectBestVoice() {
-            const voices = speechSynth.getVoices();
-            
-            // Détecter si on est sur iOS
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-            
-            if (isIOS) {
-                // Sur iOS, chercher spécifiquement les voix iOS françaises
-                selectedVoice = voices.find(voice => 
-                    voice.lang === 'fr-FR' && 
-                    (voice.name.includes('Thomas') || 
-                     voice.name.includes('Amélie') ||
-                     voice.name.includes('Marie'))
-                );
-                
-                // Si pas trouvé, chercher n'importe quelle voix française
-                if (!selectedVoice) {
-                    selectedVoice = voices.find(voice => voice.lang.startsWith('fr'));
-                }
-                
-                // Ajuster les paramètres pour iOS
-                voiceConfig.rate = 0.85;  // Plus lent sur iOS
-                voiceConfig.pitch = 1.0;  // Pitch normal sur iOS
-            } else {
-                // Sur autres plateformes
-                selectedVoice = voices.find(voice => 
-                    voice.lang === 'fr-FR' && 
-                    !voice.name.includes('Google')  // Éviter les voix Google qui peuvent bugger
-                );
-                
-                if (!selectedVoice) {
-                    selectedVoice = voices.find(voice => voice.lang.startsWith('fr'));
-                }
-            }
-            
-            console.log('Voix sélectionnée:', selectedVoice?.name || 'Voix par défaut');
-            return selectedVoice;
-        }
         
         // Classe de gestion audio pour sons binauraux
         class AudioManager {
@@ -1598,6 +1565,33 @@
             detectionMode = detectionMode === 'camera' ? 'simulation' : 'camera';
             const toggle = document.getElementById('cameraToggle');
             toggle.classList.toggle('active');
+            
+            // Mettre à jour l'affichage des métriques
+            updateBiometricDisplay();
+        }
+        
+        // Mettre à jour l'affichage des métriques selon le mode caméra
+        function updateBiometricDisplay() {
+            const heartRateNote = document.getElementById('heartRateNote');
+            const hrvNote = document.getElementById('hrvNote');
+            const coherenceNote = document.getElementById('coherenceNote');
+            
+            if (detectionMode === 'camera') {
+                // Mode caméra activé : masquer les notes
+                heartRateNote.style.display = 'none';
+                hrvNote.style.display = 'none';
+                coherenceNote.style.display = 'none';
+            } else {
+                // Mode simulation : afficher les notes et remettre à zéro
+                heartRateNote.style.display = 'block';
+                hrvNote.style.display = 'block';
+                coherenceNote.style.display = 'block';
+                
+                // Remettre les valeurs à zéro
+                document.getElementById('heartRate').textContent = '0';
+                document.getElementById('hrv').textContent = '0';
+                document.getElementById('coherence').textContent = '0';
+            }
         }
         
         // Toggle Adaptive
@@ -1710,6 +1704,9 @@
                 document.getElementById('breathRate').textContent = breathingRate.toFixed(1);
             }
             
+            // Mettre à jour l'affichage selon le mode de détection
+            updateBiometricDisplay();
+            
             showScreen('sessionScreen');
             
             if (detectionMode === 'camera') {
@@ -1730,8 +1727,7 @@
                 }
                 
                 // Démarrer avec le message vocal
-                const guidance = voiceGuidance[currentSession] || voiceGuidance.focus;
-                speak(guidance.start, true);
+                speak(voiceGuidance[currentSession].start, true);
                 
                 setTimeout(() => {
                     startTimer();
@@ -1814,17 +1810,7 @@
             const phaseIndicators = document.querySelectorAll('.phase-indicator');
             
             // Récupérer le guidage pour la session actuelle
-            let guidance = voiceGuidance[currentSession];
-            
-            // Pour les méditations thématiques, s'assurer que le guidage est défini
-            if (currentSession === 'meditation' && !guidance) {
-                guidance = voiceGuidance.meditation || {
-                    start: "Méditation guidée",
-                    inhale: ["Inspirez", "Accueillez", "Recevez"],
-                    exhale: ["Expirez", "Relâchez", "Libérez"],
-                    phases: ["Respirez en conscience"]
-                };
-            }
+            const guidance = voiceGuidance[currentSession];
             
             // Initialiser le contexte audio dès le début si nécessaire
             if (!audioContext && (gongEnabled || audioEnabled)) {
@@ -1871,7 +1857,7 @@
                         setTimeout(() => bar.classList.remove('gong-pulse'), 800);
                         
                         // Voix au début de l'inspiration (toutes les 3 respirations)
-                        if (voiceEnabled && guidance && cycleCount % 3 === 0) {
+                        if (voiceEnabled && cycleCount % 3 === 0) {
                             const inhaleText = guidance.inhale[inhaleIndex % guidance.inhale.length];
                             setTimeout(() => speak(inhaleText), 200); // Légèrement après le gong
                             inhaleIndex++;
@@ -1901,7 +1887,7 @@
                         setTimeout(() => bar.classList.remove('gong-pulse'), 800);
                         
                         // Voix au début de l'expiration (toutes les 3 respirations, décalé)
-                        if (voiceEnabled && guidance && (cycleCount + 1) % 3 === 0) {
+                        if (voiceEnabled && (cycleCount + 1) % 3 === 0) {
                             const exhaleText = guidance.exhale[exhaleIndex % guidance.exhale.length];
                             setTimeout(() => speak(exhaleText), 200); // Légèrement après le gong
                             exhaleIndex++;
@@ -1914,7 +1900,7 @@
                 counter.textContent = timeRemaining;
                 
                 // Guidance de phase à des moments spécifiques
-                if (voiceEnabled && guidance && elapsed > 10) {
+                if (voiceEnabled && elapsed > 10) {
                     if (currentSession === 'scan') {
                         // Pour le scan corporel, changer de zone toutes les 60 secondes
                         const zoneIndex = Math.floor((elapsed - 10) / 60);
@@ -1952,26 +1938,36 @@
             breathingAnimation = requestAnimationFrame(animate);
         }
         
-        // Simulate biometrics
+        // Simulate biometrics MODIFIÉ - CONDITIONNELLEMENT SELON LE MODE CAMÉRA
         function simulateBiometrics() {
-            const time = Date.now() / 1000;
-            const breathCycle = (time * 6) / 60;
-            
-            heartRate = Math.round(70 + Math.sin(breathCycle * 2 * Math.PI) * 5 + Math.random() * 3);
-            hrv = Math.round(45 + Math.sin(time / 10) * 15 + Math.random() * 5);
-            coherence = Math.round(Math.max(0, Math.min(100, 70 + Math.sin(breathCycle * Math.PI) * 20)));
-            
-            document.getElementById('heartRate').textContent = heartRate;
-            document.getElementById('hrv').textContent = hrv;
-            document.getElementById('coherence').textContent = coherence;
+            // Ne simuler que si le mode caméra est activé
+            if (detectionMode === 'camera') {
+                const time = Date.now() / 1000;
+                const breathCycle = (time * 6) / 60;
+                
+                heartRate = Math.round(70 + Math.sin(breathCycle * 2 * Math.PI) * 5 + Math.random() * 3);
+                hrv = Math.round(45 + Math.sin(time / 10) * 15 + Math.random() * 5);
+                coherence = Math.round(Math.max(0, Math.min(100, 70 + Math.sin(breathCycle * Math.PI) * 20)));
+                
+                document.getElementById('heartRate').textContent = heartRate;
+                document.getElementById('hrv').textContent = hrv;
+                document.getElementById('coherence').textContent = coherence;
+            } else {
+                // Mode simulation désactivé : garder les valeurs à zéro
+                heartRate = 0;
+                hrv = 0;
+                coherence = 0;
+                
+                document.getElementById('heartRate').textContent = '0';
+                document.getElementById('hrv').textContent = '0';
+                document.getElementById('coherence').textContent = '0';
+            }
         }
         
         // Update guidance
         function updateGuidance() {
             const progress = 1 - (timeRemaining / totalDuration);
             const guidance = voiceGuidance[currentSession];
-            
-            if (!guidance) return;
             
             if (currentSession === 'scan') {
                 // Pour le scan corporel, afficher la zone actuelle
@@ -2018,10 +2014,17 @@
             
             speak(endMessages[currentSession] || "Session terminée. Félicitations.", true);
             
-            document.getElementById('finalCoherence').textContent = coherence + '%';
+            // Afficher les résultats selon le mode de détection
+            if (detectionMode === 'camera') {
+                document.getElementById('finalCoherence').textContent = coherence + '%';
+                document.getElementById('finalHR').textContent = heartRate || '--';
+            } else {
+                document.getElementById('finalCoherence').textContent = '0%';
+                document.getElementById('finalHR').textContent = '--';
+            }
+            
             document.getElementById('finalDuration').textContent = formatTime(totalDuration);
             document.getElementById('finalBreathRate').textContent = breathingRate.toFixed(1);
-            document.getElementById('finalHR').textContent = heartRate || '--';
             
             setTimeout(() => {
                 showScreen('resultsScreen');
@@ -2070,10 +2073,8 @@
             document.getElementById('playBtn').innerHTML = '▶️ Commencer';
             document.getElementById('meditationCard').style.display = 'none';
             
-            // Reset des valeurs
-            document.getElementById('heartRate').textContent = '--';
-            document.getElementById('hrv').textContent = '--';
-            document.getElementById('coherence').textContent = '0';
+            // Reset des valeurs selon le mode de détection
+            updateBiometricDisplay();
             document.getElementById('breathingBarFill').style.width = '0%';
             document.getElementById('breathingCounter').textContent = '--';
         }
@@ -2087,49 +2088,21 @@
                 speechSynth.cancel();
             }
             
-            // Sur iOS, attendre un peu après cancel
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-            if (isIOS && priority) {
-                setTimeout(() => speakNow(text), 100);
-            } else {
-                speakNow(text);
-            }
-        }
-        
-        function speakNow(text) {
             // Créer l'utterance
             currentUtterance = new SpeechSynthesisUtterance(text);
-            
-            // Configurer avec les paramètres
             currentUtterance.rate = voiceConfig.rate;
             currentUtterance.pitch = voiceConfig.pitch;
             currentUtterance.volume = voiceConfig.volume;
             currentUtterance.lang = voiceConfig.lang;
             
-            // Utiliser la voix sélectionnée
-            if (!selectedVoice) {
-                selectedVoice = selectBestVoice();
+            // Sélectionner une voix française si disponible
+            const voices = speechSynth.getVoices();
+            const frenchVoice = voices.find(voice => voice.lang.startsWith('fr'));
+            if (frenchVoice) {
+                currentUtterance.voice = frenchVoice;
             }
             
-            if (selectedVoice) {
-                currentUtterance.voice = selectedVoice;
-            }
-            
-            // Gestion des événements pour debug
-            currentUtterance.onerror = (event) => {
-                console.error('Erreur synthèse vocale:', event);
-            };
-            
-            currentUtterance.onstart = () => {
-                console.log('Début de la synthèse vocale');
-            };
-            
-            // Parler
-            try {
-                speechSynth.speak(currentUtterance);
-            } catch (error) {
-                console.error('Erreur lors de la synthèse vocale:', error);
-            }
+            speechSynth.speak(currentUtterance);
         }
         
         // Arrêter la voix
@@ -2260,16 +2233,19 @@
         function updateVolume(value) {
             musicVolume = value / 100;
             audioManager.setVolume(musicVolume);
+            console.log('🎵 Volume musique mis à jour:', (musicVolume * 100) + '%');
         }
         
         function updateVoiceVolume(value) {
             if (voiceConfig) {
                 voiceConfig.volume = value / 100;
+                console.log('🗣️ Volume voix mis à jour:', (voiceConfig.volume * 100) + '%');
             }
         }
         
         function updateGongVolume(value) {
             gongVolume = value / 100;
+            console.log('🔔 Volume gong mis à jour:', (gongVolume * 100) + '%');
         }
         
         function changeFrequency(value) {
@@ -2363,15 +2339,15 @@
         
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('🧘 MediRelax - Cohérence cardiaque avec méditation guidée');
+            console.log('🧘 MediRelax - Mode Caméra Conditionnel');
+            console.log('📸 Métriques biométriques actives uniquement en mode caméra');
             console.log('🔔 Gong respiratoire : Do4 (↑inspire) → Sol3 (↓expire)');
             console.log('🧘‍♂️ Scan Corporel : 10 min de relaxation profonde');
             console.log('✨ Méditations Thématiques - 6 thèmes disponibles');
-            console.log('  🙏 Gratitude (5min) | 💰 Abondance (10min) | 💗 Amour (8min)');
-            console.log('  🧲 Attraction (7min) | 💪 Confiance (6min) | 😴 Sommeil (10min)');
             console.log('🎧 Pour une expérience optimale, utilisez des écouteurs');
-            console.log('💡 Astuce : Fermez les yeux et laissez-vous guider par les sons');
-            console.log('🔧 Volumes : Gong=' + (gongVolume*100) + '%, Musique=' + (musicVolume*100) + '%, Voix=' + (voiceConfig.volume*100) + '%');
+            
+            // Initialiser l'affichage des métriques
+            updateBiometricDisplay();
             
             // Initialiser les valeurs des sliders
             document.getElementById('gongVolumeSlider').value = gongVolume * 100;
@@ -2380,25 +2356,11 @@
             
             // Charger les voix disponibles
             if (speechSynth) {
-                // Forcer le chargement des voix
-                speechSynth.getVoices();
-                
                 speechSynth.addEventListener('voiceschanged', () => {
                     const voices = speechSynth.getVoices();
                     const frenchVoices = voices.filter(v => v.lang.startsWith('fr'));
                     console.log(`🗣️ ${frenchVoices.length} voix française(s) disponible(s)`);
-                    
-                    // Sélectionner la meilleure voix dès qu'elles sont chargées
-                    selectedVoice = selectBestVoice();
                 });
-                
-                // Sur iOS, forcer le rechargement des voix
-                if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-                    setTimeout(() => {
-                        speechSynth.getVoices();
-                        selectedVoice = selectBestVoice();
-                    }, 100);
-                }
             }
             
             // Test du contexte audio au premier clic
@@ -2408,122 +2370,7 @@
                     console.log('🎵 Audio activé - Les réglages de volume sont maintenant opérationnels');
                 }
             }, { once: true });
-            
-            console.log('📝 Note développeur : Pour ajouter une nouvelle méditation thématique :');
-            console.log('  1. Ajouter dans l\'objet thematicMeditations');
-            console.log('  2. Définir : name, icon, duration, desc, color, borderColor, guidance');
-            console.log('  3. La nouvelle méditation apparaîtra automatiquement dans la liste !');
-            
-            // Enregistrer le Service Worker pour la PWA
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(registration => {
-                        console.log('✅ Service Worker enregistré avec succès');
-                        
-                        // Vérifier les mises à jour périodiquement
-                        setInterval(() => {
-                            registration.update();
-                        }, 60000); // Toutes les minutes
-                    })
-                    .catch(error => {
-                        console.log('❌ Erreur Service Worker:', error);
-                    });
-                
-                // Gestionnaire pour l'installation
-                let deferredPrompt;
-                window.addEventListener('beforeinstallprompt', (e) => {
-                    e.preventDefault();
-                    deferredPrompt = e;
-                    
-                    // Afficher un bouton d'installation personnalisé après 30 secondes
-                    setTimeout(() => {
-                        if (deferredPrompt) {
-                            showInstallPrompt();
-                        }
-                    }, 30000);
-                });
-                
-                // Détecter si l'app est installée
-                window.addEventListener('appinstalled', () => {
-                    console.log('✅ MediRelax a été installée avec succès !');
-                    deferredPrompt = null;
-                });
-            }
         });
-        
-        // Fonction pour afficher l'invite d'installation
-        function showInstallPrompt() {
-            const installBanner = document.createElement('div');
-            installBanner.style.cssText = `
-                position: fixed;
-                bottom: 20px;
-                left: 20px;
-                right: 20px;
-                background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-                color: white;
-                padding: 20px;
-                border-radius: 16px;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-                z-index: 1000;
-                animation: slideUp 0.5s ease-out;
-                font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            `;
-            
-            installBanner.innerHTML = `
-                <div style="display: flex; align-items: center; justify-content: space-between;">
-                    <div>
-                        <div style="font-size: 18px; font-weight: 600; margin-bottom: 5px;">
-                            📲 Installer MediRelax
-                        </div>
-                        <div style="font-size: 14px; opacity: 0.9;">
-                            Ajoutez l'app à votre écran d'accueil pour un accès rapide
-                        </div>
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button onclick="installPWA()" style="
-                            background: white;
-                            color: #1e3a8a;
-                            border: none;
-                            padding: 10px 20px;
-                            border-radius: 25px;
-                            font-weight: 600;
-                            cursor: pointer;
-                        ">Installer</button>
-                        <button onclick="this.parentElement.parentElement.parentElement.remove()" style="
-                            background: rgba(255,255,255,0.2);
-                            color: white;
-                            border: none;
-                            padding: 10px 20px;
-                            border-radius: 25px;
-                            cursor: pointer;
-                        ">Plus tard</button>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(installBanner);
-            
-            // Supprimer automatiquement après 10 secondes
-            setTimeout(() => {
-                if (installBanner.parentElement) {
-                    installBanner.remove();
-                }
-            }, 10000);
-        }
-        
-        // Fonction d'installation
-        async function installPWA() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                console.log(`L'utilisateur a ${outcome === 'accepted' ? 'accepté' : 'refusé'} l'installation`);
-                deferredPrompt = null;
-                
-                // Supprimer la bannière
-                const banner = document.querySelector('[style*="Installer MediRelax"]')?.parentElement?.parentElement;
-                if (banner) banner.remove();
-            }
-        }
     </script>
 </body>
 </html>
