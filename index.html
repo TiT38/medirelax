@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="MediRelax">
-    <title>MediRelax - Cohérence Cardiaque</title>
+    <meta name="apple-mobile-web-app-title" content="Instant Opportun">
+    <title>Instant Opportun - Cohérence Cardiaque</title>
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#1e3a8a">
+    
+    <!-- CSS pour corriger l'affichage du logo -->
+    <link rel="stylesheet" href="logo_fix.css">
     
     <!-- Icons pour iOS -->
     <link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-180.png">
@@ -57,20 +60,41 @@
         
         .header-left {
             flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .app-logo {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: transparent;
+            overflow: visible;
+        }
+        
+        .app-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
         }
         
         .logo {
-            font-size: 36px;
+            font-size: 34px;
             font-weight: bold;
             background: linear-gradient(45deg, #06b6d4, #8b5cf6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         
         .subtitle {
             color: rgba(255,255,255,0.7);
-            font-size: 16px;
+            font-size: 18px;
+            font-weight: 500;
         }
         
         /* Menu hamburger */
@@ -814,6 +838,43 @@
             .session-grid {
                 grid-template-columns: 1fr;
             }
+            
+            .header-left {
+                gap: 12px;
+            }
+            
+            .logo {
+                font-size: 28px;
+            }
+            
+            .subtitle {
+                font-size: 16px;
+            }
+            
+            .app-logo {
+                width: 38px;
+                height: 38px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: 10px;
+            }
+            
+            .logo-svg {
+                width: 20px;
+                height: 20px;
+            }
+            
+            .app-logo img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+            
+            .header-left {
+                display: flex;
+                align-items: center;
+            }
         }
     </style>
 </head>
@@ -822,9 +883,11 @@
     <div id="homeScreen" class="screen active">
         <div class="app-header">
             <div class="header-left">
-                <div class="logo">MediRelax</div>
-                <div class="subtitle">Cohérence cardiaque adaptative                </div>
-
+                <div style="width: 48px; height: 48px; flex-shrink: 0; margin-right: 10px;"><img src="https://static.wixstatic.com/media/c01b69_ca6dc1b708b548b3afd1e5a8c17644ce~mv2.png" alt="Logo Instant Opportun" style="width: 100%; height: 100%; object-fit: contain;"></div>
+                <div>
+                    <div class="logo">Instant Opportun</div>
+                    <div class="subtitle">Cohérence cardiaque intégrative</div>
+                </div>
             </div>
             <div class="menu-button" onclick="toggleMenu()">
                 <div class="menu-line"></div>
@@ -1028,9 +1091,12 @@
             👁️ Mode Zen
         </button>
         
-        <div class="header" style="text-align: center;">
-            <div style="font-size: 24px; font-weight: bold; margin-bottom: 8px;" id="sessionTitle">Boost Focus</div>
-            <div style="color: rgba(255,255,255,0.7);" id="sessionDesc">Concentration laser</div>
+        <div class="header" style="text-align: center; display: flex; align-items: center; justify-content: center; gap: 15px;">
+            <div style="width: 48px; height: 48px; flex-shrink: 0;"><img src="https://static.wixstatic.com/media/c01b69_ca6dc1b708b548b3afd1e5a8c17644ce~mv2.png" alt="Logo Instant Opportun" style="width: 100%; height: 100%; object-fit: contain;"></div>
+            <div>
+                <div style="font-size: 24px; font-weight: bold; margin-bottom: 8px;" id="sessionTitle">Boost Focus</div>
+                <div style="color: rgba(255,255,255,0.7);" id="sessionDesc">Concentration laser</div>
+            </div>
         </div>
         
         <div class="metrics-bar" id="metricsBar">
@@ -1106,7 +1172,10 @@
     <!-- Écran de résultats -->
     <div id="resultsScreen" class="screen results-screen">
         <div class="results-content">
-            <div class="results-icon">🎉</div>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px;">
+                <div style="width: 48px; height: 48px; flex-shrink: 0;"><img src="https://static.wixstatic.com/media/c01b69_ca6dc1b708b548b3afd1e5a8c17644ce~mv2.png" alt="Logo Instant Opportun" style="width: 100%; height: 100%; object-fit: contain;"></div>
+                <div class="results-icon">🎉</div>
+            </div>
             <div class="results-title">Session complétée !</div>
             
             <div class="results-grid">
@@ -1143,8 +1212,16 @@
     <div id="meditationSelectionScreen" class="screen">
         <div class="app-header">
             <div class="header-left">
-                <div class="logo">Méditations Thématiques</div>
-                <div class="subtitle">Choisissez votre thème de méditation</div>
+                <div style="width: 48px; height: 48px; flex-shrink: 0; margin-right: 10px;"><img src="https://static.wixstatic.com/media/c01b69_ca6dc1b708b548b3afd1e5a8c17644ce~mv2.png" alt="Logo Instant Opportun" style="width: 100%; height: 100%; object-fit: contain;"></div>
+                <div class="brand-text">
+                    <div class="logo">Méditations Thématiques</div>
+                    <div class="subtitle">Choisissez votre thème de méditation</div>
+                </div>
+            </div>
+            <div class="menu-button" onclick="toggleMenu()">
+                <div class="menu-line"></div>
+                <div class="menu-line"></div>
+                <div class="menu-line"></div>
             </div>
         </div>
         
@@ -2432,7 +2509,7 @@
         
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('🧘 MediRelax - Mode Caméra Conditionnel');
+            console.log('🧘 Instant Opportun - Cohérence Cardiaque Intégrative');
             console.log('📸 Métriques biométriques actives uniquement en mode caméra');
             console.log('🔔 Gong respiratoire : Do4 (↑inspire) → Sol3 (↓expire)');
             console.log('🧘‍♂️ Scan Corporel : 10 min de relaxation profonde');
