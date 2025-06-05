@@ -1420,13 +1420,28 @@
             meditation: null // Sera défini dynamiquement selon le thème choisi
         };
         
-        // Configuration voix
+        // Configuration voix adaptée iOS
         let voiceConfig = {
-            rate: 0.9,     // Vitesse légèrement ralentie
-            pitch: 0.95,   // Ton légèrement plus grave
-            volume: 0.7,   // Volume modéré
+            rate: 0.75,    // Plus lent sur iOS pour éviter la déformation
+            pitch: 1.0,    // Pitch normal sur iOS
+            volume: 0.8,   // Volume plus élevé
             lang: 'fr-FR'  // Français
         };
+        
+        // Détection des plateformes
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isAndroid = /Android/.test(navigator.userAgent);
+        
+        // Ajuster automatiquement pour chaque plateforme
+        if (isIOS) {
+            voiceConfig.rate = 0.7;   // Plus lent sur iOS
+            voiceConfig.pitch = 1.0;  // Pitch normal sur iOS
+            voiceConfig.volume = 0.9; // Volume plus élevé sur iOS
+        } else if (isAndroid) {
+            voiceConfig.rate = 0.85;  // Légèrement plus lent sur Android pour clarté
+            voiceConfig.pitch = 0.95; // Pitch légèrement plus grave (optimal Android)
+            voiceConfig.volume = 0.75; // Volume adapté Android
+        }
         
         // Classe de gestion audio pour sons binauraux
         class AudioManager {
@@ -2079,15 +2094,31 @@
             document.getElementById('breathingCounter').textContent = '--';
         }
         
-        // Fonction de synthèse vocale
+        // Fonction de synthèse vocale optimisée iOS
         function speak(text, priority = false) {
             if (!voiceEnabled || !speechSynth) return;
             
-            // Si prioritaire, arrêter ce qui est en cours
-            if (priority && speechSynth.speaking) {
-                speechSynth.cancel();
+            // Gestion spéciale iOS
+            if (isIOS) {
+                // Sur iOS, toujours arrêter proprement avant de parler
+                if (speechSynth.speaking) {
+                    speechSynth.cancel();
+                    // Attendre que l'arrêt soit effectif sur iOS
+                    setTimeout(() => speakText(text), 200);
+                } else {
+                    speakText(text);
+                }
+            } else {
+                // Comportement standard pour autres plateformes
+                if (priority && speechSynth.speaking) {
+                    speechSynth.cancel();
+                }
+                speakText(text);
             }
-            
+        }
+        
+        // Fonction auxiliaire pour la synthèse
+        function speakText(text) {
             // Créer l'utterance
             currentUtterance = new SpeechSynthesisUtterance(text);
             currentUtterance.rate = voiceConfig.rate;
@@ -2095,21 +2126,79 @@
             currentUtterance.volume = voiceConfig.volume;
             currentUtterance.lang = voiceConfig.lang;
             
-            // Sélectionner une voix française si disponible
+            // Sélection de voix optimisée par plateforme
             const voices = speechSynth.getVoices();
-            const frenchVoice = voices.find(voice => voice.lang.startsWith('fr'));
-            if (frenchVoice) {
-                currentUtterance.voice = frenchVoice;
+            let selectedVoice = null;
+            
+            if (isIOS) {
+                // Sur iOS, chercher spécifiquement les voix iOS françaises
+                selectedVoice = voices.find(voice => 
+                    voice.lang === 'fr-FR' && 
+                    (voice.name.includes('Thomas') || 
+                     voice.name.includes('Amélie') ||
+                     voice.name.includes('Marie'))
+                );
+                
+                // Si pas trouvé, prendre n'importe quelle voix française
+                if (!selectedVoice) {
+                    selectedVoice = voices.find(voice => voice.lang.startsWith('fr'));
+                }
+            } else if (isAndroid) {
+                // Sur Android, chercher les voix Google françaises en priorité
+                selectedVoice = voices.find(voice => 
+                    voice.lang === 'fr-FR' && 
+                    voice.name.includes('Google')
+                );
+                
+                // Sinon, n'importe quelle voix française
+                if (!selectedVoice) {
+                    selectedVoice = voices.find(voice => voice.lang.startsWith('fr'));
+                }
+            } else {
+                // Pour autres plateformes (desktop)
+                selectedVoice = voices.find(voice => voice.lang.startsWith('fr'));
             }
             
-            speechSynth.speak(currentUtterance);
+            if (selectedVoice) {
+                currentUtterance.voice = selectedVoice;
+            }
+            
+            // Gestion des erreurs pour iOS
+            currentUtterance.onerror = (event) => {
+                console.log('Erreur synthèse vocale iOS:', event.error);
+                if (event.error === 'interrupted') {
+                    // Normal sur iOS, ne pas afficher d'erreur
+                    return;
+                }
+            };
+            
+            currentUtterance.onend = () => {
+                currentUtterance = null;
+            };
+            
+            // Parler avec gestion d'erreur
+            try {
+                speechSynth.speak(currentUtterance);
+            } catch (error) {
+                console.log('Erreur lors de la synthèse vocale:', error);
+            }
         }
         
-        // Arrêter la voix
+        // Arrêter la voix (optimisé iOS)
         function stopSpeaking() {
             if (speechSynth && speechSynth.speaking) {
                 speechSynth.cancel();
+                
+                // Sur iOS, s'assurer que l'arrêt est effectif
+                if (isIOS) {
+                    setTimeout(() => {
+                        if (speechSynth.speaking) {
+                            speechSynth.cancel();
+                        }
+                    }, 100);
+                }
             }
+            currentUtterance = null;
         }
         
         // Toggle voix
@@ -2237,10 +2326,14 @@
         }
         
         function updateVoiceVolume(value) {
-            if (voiceConfig) {
-                voiceConfig.volume = value / 100;
-                console.log('🗣️ Volume voix mis à jour:', (voiceConfig.volume * 100) + '%');
+            voiceConfig.volume = value / 100;
+            
+            // Sur iOS, s'assurer que le volume reste dans une plage acceptable
+            if (isIOS && voiceConfig.volume < 0.5) {
+                voiceConfig.volume = 0.5; // Volume minimum pour iOS
             }
+            
+            console.log('🗣️ Volume voix mis à jour:', (voiceConfig.volume * 100) + '%');
         }
         
         function updateGongVolume(value) {
@@ -2346,6 +2439,33 @@
             console.log('✨ Méditations Thématiques - 6 thèmes disponibles');
             console.log('🎧 Pour une expérience optimale, utilisez des écouteurs');
             
+            // Détection et configuration iOS
+            if (isIOS) {
+                console.log('📱 iOS détecté - Configuration vocale optimisée');
+                
+                // Forcer le chargement des voix sur mobile
+                if (speechSynth) {
+                    speechSynth.getVoices(); // Déclenche le chargement
+                    
+                    // Écouter le chargement des voix pour iOS et Android
+                    speechSynth.addEventListener('voiceschanged', function() {
+                        const voices = speechSynth.getVoices();
+                        const frenchVoices = voices.filter(v => v.lang.startsWith('fr'));
+                        
+                        if (isIOS) {
+                            console.log(`🗣️ iOS: ${frenchVoices.length} voix française(s) chargée(s)`);
+                        } else if (isAndroid) {
+                            console.log(`🗣️ Android: ${frenchVoices.length} voix française(s) chargée(s)`);
+                        }
+                        
+                        // Log des voix françaises disponibles pour debug
+                        frenchVoices.forEach(voice => {
+                            console.log(`   - ${voice.name} (${voice.lang})`);
+                        });
+                    });
+                }
+            }
+            
             // Initialiser l'affichage des métriques
             updateBiometricDisplay();
             
@@ -2354,12 +2474,12 @@
             document.getElementById('volumeSlider').value = musicVolume * 100;
             document.getElementById('voiceVolumeSlider').value = voiceConfig.volume * 100;
             
-            // Charger les voix disponibles
-            if (speechSynth) {
+            // Charger les voix disponibles (desktop)
+            if (speechSynth && !isIOS && !isAndroid) {
                 speechSynth.addEventListener('voiceschanged', () => {
                     const voices = speechSynth.getVoices();
                     const frenchVoices = voices.filter(v => v.lang.startsWith('fr'));
-                    console.log(`🗣️ ${frenchVoices.length} voix française(s) disponible(s)`);
+                    console.log(`🗣️ Desktop: ${frenchVoices.length} voix française(s) disponible(s)`);
                 });
             }
             
@@ -2368,6 +2488,11 @@
                 if (!audioContext) {
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
                     console.log('🎵 Audio activé - Les réglages de volume sont maintenant opérationnels');
+                }
+                
+                // Sur mobile, tester la synthèse vocale au premier clic
+                if ((isIOS || isAndroid) && speechSynth) {
+                    speechSynth.getVoices(); // Re-déclencher si nécessaire
                 }
             }, { once: true });
         });
