@@ -1305,6 +1305,9 @@
                     <p style="font-size: 11px; color: rgba(255,255,255,0.6); margin: 0 0 5px 0;">
                         🔔 Le gong sonne à chaque changement : aigu (inspire) → medium (expire)
                     </p>
+                    <p style="font-size: 11px; color: rgba(255,255,255,0.6); margin: 0 0 5px 0;">
+                        🎵 Cohérence 0.1Hz sélectionnée par défaut pour optimiser la variabilité cardiaque
+                    </p>
                     <p style="font-size: 11px; color: rgba(255,255,255,0.6); margin: 0;">
                         💡 Parfait pour pratiquer les yeux fermés • Optimisé mobile
                     </p>
@@ -1318,13 +1321,13 @@
                     </div>
                 </div>
                 <select id="frequencySelect" oninput="changeFrequency(this.value)" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; font-size: 14px; margin-top: 10px;">
+                    <option value="coherence" selected>0.1 Hz - Cohérence</option>
                     <option value="528hz">528 Hz - Amour</option>
                     <option value="432hz">432 Hz - Harmonie</option>
                     <option value="396hz">396 Hz - Libération</option>
                     <option value="639hz">639 Hz - Relations</option>
                     <option value="theta">Ondes Theta</option>
                     <option value="alpha">Ondes Alpha</option>
-                    <option value="coherence">0.1 Hz - Cohérence</option>
                 </select>
             </div>
         </div>
@@ -1593,7 +1596,7 @@
         let audioContext = null;
         let binauralOscillators = null;
         let binauralGainNode = null;
-        let currentFrequency = '528hz';
+        let currentFrequency = 'coherence'; // Fréquence cohérence cardiaque par défaut
         
         // Variables pour l'installation PWA
         let deferredPrompt = null;
@@ -1847,13 +1850,13 @@
                 this.volume = musicVolume || 0.3;
                 
                 this.frequencies = {
+                    'coherence': { base: 256, beat: 0.1, name: 'Cohérence 0.1Hz' }, // En premier pour défaut
                     '528hz': { base: 528, beat: 6, name: 'Amour & Guérison' },
                     '432hz': { base: 432, beat: 8, name: 'Harmonie Naturelle' },
                     '396hz': { base: 396, beat: 5, name: 'Libération' },
                     '639hz': { base: 639, beat: 7, name: 'Relations' },
                     'theta': { base: 200, beat: 4, name: 'Ondes Theta' },
-                    'alpha': { base: 300, beat: 10, name: 'Ondes Alpha' },
-                    'coherence': { base: 256, beat: 0.1, name: 'Cohérence 0.1Hz' }
+                    'alpha': { base: 300, beat: 10, name: 'Ondes Alpha' }
                 };
             }
             
@@ -2069,7 +2072,7 @@
                     confidence: 'alpha',
                     sleep: 'theta'
                 };
-                currentFrequency = frequencyMap[currentMeditation] || '528hz';
+                currentFrequency = frequencyMap[currentMeditation] || 'coherence';
                 document.getElementById('frequencySelect').value = currentFrequency;
             } else {
                 document.getElementById('sessionTitle').textContent = sessions[type].name;
@@ -2806,7 +2809,7 @@
             
             if (!audioManager.isPlaying) {
                 audioManager.start(currentFrequency);
-                console.log('🎵 Sons binauraux démarrés - Fréquence: ' + currentFrequency + ', Volume: ' + (musicVolume * 100) + '%');
+                console.log('🎵 Sons binauraux démarrés - Fréquence: ' + currentFrequency + ' (Cohérence cardiaque), Volume: ' + (musicVolume * 100) + '%');
                 
                 // Arrêter après 5 secondes
                 setTimeout(() => {
@@ -2985,6 +2988,7 @@
             console.log('🧘 Instant Opportun - Cohérence Cardiaque Intégrative');
             console.log('📸 Métriques biométriques actives uniquement en mode caméra');
             console.log('🔔 Gong respiratoire : Do4 (↑inspire) → La3/Sol3 (↓expire) - Optimisé mobile');
+            console.log('🎵 Sons binauraux par défaut : 0.1 Hz Cohérence cardiaque');
             console.log('🧘‍♂️ Scan Corporel : 10 min de relaxation profonde');
             console.log('✨ Méditations Thématiques - 6 thèmes disponibles');
             console.log('🎧 Pour une expérience optimale, utilisez des écouteurs');
@@ -3006,6 +3010,9 @@
                         }
                     }, 3000);
                 }
+                
+                // Initialiser l'audio avec la fréquence de cohérence par défaut
+                console.log('🎵 Fréquence audio initialisée : Cohérence 0.1Hz (optimale pour la variabilité cardiaque)');
             }, 1000);
             
             // Détection et configuration mobile optimisée
@@ -3051,10 +3058,11 @@
             // Initialiser l'affichage des métriques
             updateBiometricDisplay();
             
-            // Initialiser les valeurs des sliders
+            // Initialiser les valeurs des sliders et la fréquence par défaut
             document.getElementById('gongVolumeSlider').value = gongVolume * 100;
             document.getElementById('volumeSlider').value = musicVolume * 100;
             document.getElementById('voiceVolumeSlider').value = voiceConfig.volume * 100;
+            document.getElementById('frequencySelect').value = currentFrequency; // Cohérence par défaut
             
             // Charger les voix disponibles (desktop)
             if (speechSynth && !isIOS && !isAndroid) {
