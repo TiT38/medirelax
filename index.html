@@ -1289,10 +1289,10 @@
                 </div>
                 <div style="margin-top: 10px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px;">
                     <p style="font-size: 11px; color: rgba(255,255,255,0.6); margin: 0 0 5px 0;">
-                        🔔 Le gong sonne doucement à chaque changement : aigu (inspire) → grave (expire)
+                        🔔 Le gong sonne à chaque changement : aigu (inspire) → medium (expire)
                     </p>
                     <p style="font-size: 11px; color: rgba(255,255,255,0.6); margin: 0;">
-                        💡 Parfait pour pratiquer les yeux fermés en toute autonomie
+                        💡 Parfait pour pratiquer les yeux fermés • Optimisé mobile
                     </p>
                     <div style="margin-top: 10px; display: flex; gap: 10px;">
                         <button onclick="testGong()" style="flex: 1; padding: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; font-size: 12px; cursor: pointer;">
@@ -1814,11 +1814,11 @@
         
         // Ajuster automatiquement pour chaque plateforme avec vitesse optimisée
         if (isIOS) {
-            voiceConfig.rate = 0.9;   // Vitesse optimale iOS (était 0.7)
+            voiceConfig.rate = 1.0;   // Vitesse normale iOS (était 0.9)
             voiceConfig.pitch = 1.0;  // Pitch normal sur iOS
             voiceConfig.volume = 0.85; // Volume optimisé iOS
         } else if (isAndroid) {
-            voiceConfig.rate = 0.95;  // Vitesse optimale Android (était 0.85)
+            voiceConfig.rate = 1.05;  // Vitesse légèrement accélérée Android (était 0.95)
             voiceConfig.pitch = 0.98; // Pitch légèrement ajusté
             voiceConfig.volume = 0.8; // Volume optimisé Android
         }
@@ -2636,12 +2636,17 @@
             delay.delayTime.value = 0.1;
             delayGain.gain.value = 0.25;
             
-            // Fréquences différentes pour inspire/expire
+            // Fréquences adaptées mobile pour meilleure audibilité
             let baseFreq;
             if (type === 'inhale') {
-                baseFreq = 261.63; // Do4 - Note plus claire pour l'inspiration
+                baseFreq = 261.63; // Do4 - Note claire pour l'inspiration
             } else {
-                baseFreq = 196.00; // Sol3 - Note plus grave pour l'expiration
+                // Fréquence ajustée pour mobile - moins grave mais toujours différenciée
+                if (isIOS || isAndroid) {
+                    baseFreq = 220.00; // La3 - Plus audible sur mobile que Sol3
+                } else {
+                    baseFreq = 196.00; // Sol3 - Note grave pour desktop
+                }
             }
             
             // Configuration des oscillateurs
@@ -2653,16 +2658,30 @@
             osc2.type = 'sine';
             osc3.type = 'sine';
             
-            // Configuration du filtre pour adoucir le son
+            // Configuration du filtre optimisée mobile
             filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(1200, now);
-            filter.Q.setValueAtTime(2, now);
             
-            // Modulation légère de la fréquence pour un effet plus organique
-            filter.frequency.exponentialRampToValueAtTime(600, now + 2.5);
+            if (isIOS || isAndroid) {
+                // Filtre moins restrictif sur mobile pour laisser passer plus de fréquences
+                filter.frequency.setValueAtTime(1500, now);
+                filter.Q.setValueAtTime(1.5, now);
+                // Modulation plus douce
+                filter.frequency.exponentialRampToValueAtTime(800, now + 2.5);
+            } else {
+                // Configuration originale pour desktop
+                filter.frequency.setValueAtTime(1200, now);
+                filter.Q.setValueAtTime(2, now);
+                filter.frequency.exponentialRampToValueAtTime(600, now + 2.5);
+            }
             
-            // Enveloppe ADSR douce
-            const maxVolume = gongVolume * 0.25; // Volume max basé sur le réglage global
+            // Enveloppe ADSR optimisée mobile
+            let maxVolume = gongVolume * 0.25; // Volume de base
+            
+            // Augmenter le volume sur mobile pour compenser les petits haut-parleurs
+            if (isIOS || isAndroid) {
+                maxVolume = gongVolume * 0.35; // Volume plus élevé sur mobile
+            }
+            
             gainNode.gain.setValueAtTime(0, now);
             gainNode.gain.linearRampToValueAtTime(maxVolume, now + 0.03); // Attaque douce
             gainNode.gain.linearRampToValueAtTime(maxVolume * 0.75, now + 0.15); // Decay
@@ -2746,12 +2765,13 @@
             
             // Premier gong (inspire)
             playGong('inhale');
+            const mobileNote = (isIOS || isAndroid) ? 'La3' : 'Sol3';
             console.log('🔔 Gong inspiration (Do4) - Volume: ' + (gongVolume * 100) + '%');
             
             // Deuxième gong (expire) après 1.5 secondes
             setTimeout(() => {
                 playGong('exhale');
-                console.log('🔔 Gong expiration (Sol3) - Volume: ' + (gongVolume * 100) + '%');
+                console.log(`🔔 Gong expiration (${mobileNote}) - Volume: ` + (gongVolume * 100) + '%');
             }, 1500);
         }
         
@@ -2921,7 +2941,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             console.log('🧘 Instant Opportun - Cohérence Cardiaque Intégrative');
             console.log('📸 Métriques biométriques actives uniquement en mode caméra');
-            console.log('🔔 Gong respiratoire : Do4 (↑inspire) → Sol3 (↓expire)');
+            console.log('🔔 Gong respiratoire : Do4 (↑inspire) → La3/Sol3 (↓expire) - Optimisé mobile');
             console.log('🧘‍♂️ Scan Corporel : 10 min de relaxation profonde');
             console.log('✨ Méditations Thématiques - 6 thèmes disponibles');
             console.log('🎧 Pour une expérience optimale, utilisez des écouteurs');
@@ -2947,7 +2967,7 @@
             
             // Détection et configuration mobile optimisée
             if (isIOS) {
-                console.log('📱 iOS détecté - Synthèse vocale optimisée (rate: 0.9)');
+                console.log('📱 iOS détecté - Synthèse vocale optimisée (rate: 1.0) + Gong ajusté');
                 
                 // Forcer le chargement des voix sur mobile
                 if (speechSynth) {
@@ -2969,7 +2989,7 @@
                     });
                 }
             } else if (isAndroid) {
-                console.log('📱 Android détecté - Synthèse vocale optimisée (rate: 0.95)');
+                console.log('📱 Android détecté - Synthèse vocale optimisée (rate: 1.05) + Gong ajusté');
                 
                 if (speechSynth) {
                     speechSynth.addEventListener('voiceschanged', function() {
