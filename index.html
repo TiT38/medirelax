@@ -63,16 +63,23 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            min-width: 0; /* Important pour permettre le text overflow */
+        }
+        
+        .brand-container {
+            flex: 1;
+            min-width: 0; /* Important pour permettre le text overflow */
         }
         
         .app-logo {
-            width: 40px;
-            height: 40px;
+            width: 48px;
+            height: 48px;
             display: flex;
             align-items: center;
             justify-content: center;
             background-color: transparent;
             overflow: visible;
+            flex-shrink: 0; /* Empêche le logo de rétrécir */
         }
         
         .app-logo img {
@@ -89,12 +96,14 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 8px;
+            line-height: 1.1;
         }
         
         .subtitle {
             color: rgba(255,255,255,0.7);
             font-size: 18px;
             font-weight: 500;
+            line-height: 1.2;
         }
         
         /* Menu hamburger */
@@ -111,6 +120,7 @@
             gap: 4px;
             cursor: pointer;
             transition: all 0.2s ease;
+            flex-shrink: 0; /* Empêche le bouton de rétrécir */
         }
         
         .menu-button:active {
@@ -187,6 +197,15 @@
             font-weight: 600;
             margin-bottom: 15px;
             color: rgba(255,255,255,0.9);
+        }
+        
+        .installation-subtitle {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 15px;
+            margin-top: -10px;
+            font-style: italic;
+            line-height: 1.3;
         }
         
         /* Overlay */
@@ -727,6 +746,149 @@
             cursor: not-allowed;
         }
         
+        /* Styles pour l'installation PWA */
+        .install-app-btn {
+            width: 100%;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(16, 185, 129, 0.2));
+            border: 2px solid rgba(34, 197, 94, 0.4);
+            border-radius: 16px;
+            padding: 16px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .install-app-btn:hover {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(16, 185, 129, 0.3));
+            transform: translateY(-1px);
+        }
+        
+        .install-app-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .install-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        
+        .install-text {
+            flex: 1;
+            text-align: left;
+        }
+        
+        .install-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        
+        .install-desc {
+            font-size: 11px;
+            color: rgba(255,255,255,0.7);
+        }
+        
+        /* Instructions iOS */
+        .ios-install-instructions {
+            margin-bottom: 12px;
+        }
+        
+        .ios-install-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 12px;
+        }
+        
+        .ios-install-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .ios-install-icon {
+            font-size: 16px;
+        }
+        
+        .ios-install-title {
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .ios-install-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .ios-step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+        
+        .ios-step-number {
+            width: 18px;
+            height: 18px;
+            background: rgba(59, 130, 246, 0.3);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .ios-step-text {
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .ios-step strong {
+            color: white;
+        }
+        
+        /* Message app installée */
+        .app-installed-message {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        
+        .installed-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        
+        .installed-text {
+            flex: 1;
+        }
+        
+        .installed-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 2px;
+            color: rgba(255,255,255,0.9);
+        }
+        
+        .installed-desc {
+            font-size: 11px;
+            color: rgba(255,255,255,0.7);
+        }
+        
         /* Adaptive status compact */
         .adaptive-status {
             position: fixed;
@@ -816,8 +978,50 @@
             color: rgba(255,255,255,0.8);
         }
         
-        /* Responsive */
+        /* RESPONSIVE AMÉLIORÉ POUR MOBILE */
         @media (max-width: 480px) {
+            .screen {
+                padding: 15px;
+            }
+            
+            .app-header {
+                margin-bottom: 20px;
+            }
+            
+            .header-left {
+                gap: 12px;
+            }
+            
+            .app-logo {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .logo {
+                font-size: 22px; /* Réduit pour mobile */
+                margin-bottom: 4px;
+                white-space: nowrap; /* Empêche le retour à la ligne */
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            
+            .subtitle {
+                font-size: 13px; /* Réduit pour mobile */
+                line-height: 1.3;
+                white-space: nowrap; /* Empêche le retour à la ligne */
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            
+            .menu-button {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .menu-line {
+                width: 18px;
+            }
+            
             .breathing-guide-container {
                 max-width: 100%;
                 padding: 0 10px;
@@ -839,41 +1043,80 @@
                 grid-template-columns: 1fr;
             }
             
-            .header-left {
-                gap: 12px;
+            .stats-compact {
+                margin-bottom: 20px;
             }
             
-            .logo {
-                font-size: 28px;
+            .stat-value {
+                font-size: 20px;
             }
             
-            .subtitle {
+            .stat-label {
+                font-size: 10px;
+            }
+            
+            .quick-start {
+                padding: 16px;
+                margin-bottom: 20px;
+            }
+            
+            .quick-start-title {
                 font-size: 16px;
             }
             
+            .quick-start-desc {
+                font-size: 13px;
+            }
+        }
+        
+        /* RESPONSIVE POUR TRÈS PETITS ÉCRANS */
+        @media (max-width: 360px) {
+            .screen {
+                padding: 12px;
+            }
+            
+            .logo {
+                font-size: 18px;
+            }
+            
+            .subtitle {
+                font-size: 11px;
+            }
+            
             .app-logo {
-                width: 38px;
-                height: 38px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin-right: 10px;
+                width: 36px;
+                height: 36px;
             }
             
-            .logo-svg {
-                width: 20px;
-                height: 20px;
+            .menu-button {
+                width: 36px;
+                height: 36px;
             }
             
-            .app-logo img {
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
+            .stat-value {
+                font-size: 18px;
+            }
+        }
+        
+        /* RESPONSIVE LANDSCAPE MOBILE */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .app-header {
+                margin-bottom: 15px;
             }
             
-            .header-left {
-                display: flex;
-                align-items: center;
+            .stats-compact {
+                margin-bottom: 15px;
+                padding: 12px;
+            }
+            
+            .quick-start {
+                margin-bottom: 15px;
+                padding: 12px;
+            }
+            
+            .timer {
+                font-size: 32px;
+                margin: 15px 0;
             }
         }
     </style>
@@ -883,8 +1126,10 @@
     <div id="homeScreen" class="screen active">
         <div class="app-header">
             <div class="header-left">
-                <div style="width: 48px; height: 48px; flex-shrink: 0; margin-right: 10px;"><img src="assets/logo.png" alt="Logo Instant Opportun" style="width: 100%; height: 100%; object-fit: contain;"></div>
-                <div>
+                <div class="app-logo">
+                    <img src="assets/logo.png" alt="Logo Instant Opportun">
+                </div>
+                <div class="brand-container">
                     <div class="logo">Instant Opportun</div>
                     <div class="subtitle">Cohérence cardiaque intégrative</div>
                 </div>
@@ -1080,6 +1325,54 @@
                 <div>Meilleure série : <strong>0 jours</strong></div>
             </div>
         </div>
+        
+        <!-- Section Installation App -->
+        <div class="panel-section">
+            <h4 class="panel-section-title">📱 Installation</h4>
+            <div class="installation-subtitle">Installer l'application sur l'écran de votre smartphone</div>
+            
+            <!-- Bouton installation Android/Chrome -->
+            <button id="installButton" class="install-app-btn" onclick="installApp()" style="display: none;">
+                <span class="install-icon">📱</span>
+                <div class="install-text">
+                    <div class="install-title">Installer l'app</div>
+                    <div class="install-desc">Accès rapide depuis l'écran d'accueil</div>
+                </div>
+            </button>
+            
+            <!-- Instructions iOS -->
+            <div id="iosInstructions" class="ios-install-instructions" style="display: none;">
+                <div class="ios-install-card">
+                    <div class="ios-install-header">
+                        <span class="ios-install-icon">📱</span>
+                        <span class="ios-install-title">Installer sur iOS</span>
+                    </div>
+                    <div class="ios-install-steps">
+                        <div class="ios-step">
+                            <span class="ios-step-number">1</span>
+                            <span class="ios-step-text">Appuyez sur <strong>⎋ Partager</strong></span>
+                        </div>
+                        <div class="ios-step">
+                            <span class="ios-step-number">2</span>
+                            <span class="ios-step-text">Sélectionnez <strong>"Sur l'écran d'accueil"</strong></span>
+                        </div>
+                        <div class="ios-step">
+                            <span class="ios-step-number">3</span>
+                            <span class="ios-step-text">Confirmez <strong>"Ajouter"</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Message app déjà installée -->
+            <div id="appInstalledMessage" class="app-installed-message" style="display: none;">
+                <div class="installed-icon">✅</div>
+                <div class="installed-text">
+                    <div class="installed-title">App installée</div>
+                    <div class="installed-desc">L'app est disponible sur votre écran d'accueil</div>
+                </div>
+            </div>
+        </div>
     </div>
     
     <!-- Overlay -->
@@ -1092,7 +1385,9 @@
         </button>
         
         <div class="header" style="text-align: center; display: flex; align-items: center; justify-content: center; gap: 15px;">
-            <div style="width: 48px; height: 48px; flex-shrink: 0;"><img src="https://static.wixstatic.com/media/c01b69_ca6dc1b708b548b3afd1e5a8c17644ce~mv2.png" alt="Logo Instant Opportun" style="width: 100%; height: 100%; object-fit: contain;"></div>
+            <div style="width: 48px; height: 48px; flex-shrink: 0;">
+                <img src="assets/logo.png" alt="Logo Instant Opportun" style="width: 100%; height: 100%; object-fit: contain;">
+            </div>
             <div>
                 <div style="font-size: 24px; font-weight: bold; margin-bottom: 8px;" id="sessionTitle">Boost Focus</div>
                 <div style="color: rgba(255,255,255,0.7);" id="sessionDesc">Concentration laser</div>
@@ -1173,7 +1468,9 @@
     <div id="resultsScreen" class="screen results-screen">
         <div class="results-content">
             <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px;">
-                <div style="width: 48px; height: 48px; flex-shrink: 0;"><img src="https://static.wixstatic.com/media/c01b69_ca6dc1b708b548b3afd1e5a8c17644ce~mv2.png" alt="Logo Instant Opportun" style="width: 100%; height: 100%; object-fit: contain;"></div>
+                <div style="width: 48px; height: 48px; flex-shrink: 0;">
+                    <img src="assets/logo.png" alt="Logo Instant Opportun" style="width: 100%; height: 100%; object-fit: contain;">
+                </div>
                 <div class="results-icon">🎉</div>
             </div>
             <div class="results-title">Session complétée !</div>
@@ -1212,8 +1509,10 @@
     <div id="meditationSelectionScreen" class="screen">
         <div class="app-header">
             <div class="header-left">
-                <div style="width: 48px; height: 48px; flex-shrink: 0; margin-right: 10px;"><img src="https://static.wixstatic.com/media/c01b69_ca6dc1b708b548b3afd1e5a8c17644ce~mv2.png" alt="Logo Instant Opportun" style="width: 100%; height: 100%; object-fit: contain;"></div>
-                <div class="brand-text">
+                <div class="app-logo">
+                    <img src="assets/logo.png" alt="Logo Instant Opportun">
+                </div>
+                <div class="brand-container">
                     <div class="logo">Méditations Thématiques</div>
                     <div class="subtitle">Choisissez votre thème de méditation</div>
                 </div>
@@ -1281,6 +1580,10 @@
         let binauralOscillators = null;
         let binauralGainNode = null;
         let currentFrequency = '528hz';
+        
+        // Variables pour l'installation PWA
+        let deferredPrompt = null;
+        let isAppInstalled = false;
         
         const sessions = {
             sos: { name: 'SOS Stress', duration: 90, desc: 'Ancrage d\'urgence' },
@@ -1497,11 +1800,11 @@
             meditation: null // Sera défini dynamiquement selon le thème choisi
         };
         
-        // Configuration voix adaptée iOS
+        // Configuration voix optimisée mobile
         let voiceConfig = {
-            rate: 0.75,    // Plus lent sur iOS pour éviter la déformation
-            pitch: 1.0,    // Pitch normal sur iOS
-            volume: 0.8,   // Volume plus élevé
+            rate: 1.0,     // Vitesse normale par défaut
+            pitch: 1.0,    // Pitch normal
+            volume: 0.8,   // Volume adapté
             lang: 'fr-FR'  // Français
         };
         
@@ -1509,15 +1812,15 @@
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         const isAndroid = /Android/.test(navigator.userAgent);
         
-        // Ajuster automatiquement pour chaque plateforme
+        // Ajuster automatiquement pour chaque plateforme avec vitesse optimisée
         if (isIOS) {
-            voiceConfig.rate = 0.7;   // Plus lent sur iOS
+            voiceConfig.rate = 0.9;   // Vitesse optimale iOS (était 0.7)
             voiceConfig.pitch = 1.0;  // Pitch normal sur iOS
-            voiceConfig.volume = 0.9; // Volume plus élevé sur iOS
+            voiceConfig.volume = 0.85; // Volume optimisé iOS
         } else if (isAndroid) {
-            voiceConfig.rate = 0.85;  // Légèrement plus lent sur Android pour clarté
-            voiceConfig.pitch = 0.95; // Pitch légèrement plus grave (optimal Android)
-            voiceConfig.volume = 0.75; // Volume adapté Android
+            voiceConfig.rate = 0.95;  // Vitesse optimale Android (était 0.85)
+            voiceConfig.pitch = 0.98; // Pitch légèrement ajusté
+            voiceConfig.volume = 0.8; // Volume optimisé Android
         }
         
         // Classe de gestion audio pour sons binauraux
@@ -1948,10 +2251,11 @@
                         bar.classList.add('gong-pulse');
                         setTimeout(() => bar.classList.remove('gong-pulse'), 800);
                         
-                        // Voix au début de l'inspiration (toutes les 3 respirations)
-                        if (voiceEnabled && cycleCount % 3 === 0) {
+                        // Voix optimisée pour mobile - synchronisation améliorée
+                        if (voiceEnabled && cycleCount % 3 === 0 && cycleCount > 0) {
                             const inhaleText = guidance.inhale[inhaleIndex % guidance.inhale.length];
-                            setTimeout(() => speak(inhaleText), 200); // Légèrement après le gong
+                            // Délai réduit pour meilleure synchronisation
+                            setTimeout(() => speak(inhaleText), 100);
                             inhaleIndex++;
                         }
                     }
@@ -1978,10 +2282,11 @@
                         bar.classList.add('gong-pulse');
                         setTimeout(() => bar.classList.remove('gong-pulse'), 800);
                         
-                        // Voix au début de l'expiration (toutes les 3 respirations, décalé)
-                        if (voiceEnabled && (cycleCount + 1) % 3 === 0) {
+                        // Voix optimisée pour mobile - synchronisation améliorée
+                        if (voiceEnabled && (cycleCount + 1) % 3 === 0 && cycleCount > 0) {
                             const exhaleText = guidance.exhale[exhaleIndex % guidance.exhale.length];
-                            setTimeout(() => speak(exhaleText), 200); // Légèrement après le gong
+                            // Délai réduit pour meilleure synchronisation
+                            setTimeout(() => speak(exhaleText), 100);
                             exhaleIndex++;
                         }
                     }
@@ -2171,22 +2476,22 @@
             document.getElementById('breathingCounter').textContent = '--';
         }
         
-        // Fonction de synthèse vocale optimisée iOS
+        // Fonction de synthèse vocale optimisée mobile
         function speak(text, priority = false) {
             if (!voiceEnabled || !speechSynth) return;
             
-            // Gestion spéciale iOS
-            if (isIOS) {
-                // Sur iOS, toujours arrêter proprement avant de parler
+            // Gestion améliorée pour mobile
+            if (isIOS || isAndroid) {
+                // Sur mobile, nettoyer avant de parler
                 if (speechSynth.speaking) {
                     speechSynth.cancel();
-                    // Attendre que l'arrêt soit effectif sur iOS
-                    setTimeout(() => speakText(text), 200);
+                    // Délai réduit pour fluidité
+                    setTimeout(() => speakText(text), 150);
                 } else {
                     speakText(text);
                 }
             } else {
-                // Comportement standard pour autres plateformes
+                // Comportement standard pour desktop
                 if (priority && speechSynth.speaking) {
                     speechSynth.cancel();
                 }
@@ -2194,7 +2499,7 @@
             }
         }
         
-        // Fonction auxiliaire pour la synthèse
+        // Fonction auxiliaire optimisée
         function speakText(text) {
             // Créer l'utterance
             currentUtterance = new SpeechSynthesisUtterance(text);
@@ -2208,31 +2513,39 @@
             let selectedVoice = null;
             
             if (isIOS) {
-                // Sur iOS, chercher spécifiquement les voix iOS françaises
+                // Sur iOS, priorité aux voix natives françaises
                 selectedVoice = voices.find(voice => 
                     voice.lang === 'fr-FR' && 
+                    voice.localService && // Voix locale pour éviter les coupures
                     (voice.name.includes('Thomas') || 
                      voice.name.includes('Amélie') ||
                      voice.name.includes('Marie'))
                 );
                 
-                // Si pas trouvé, prendre n'importe quelle voix française
+                // Fallback voix française locale
+                if (!selectedVoice) {
+                    selectedVoice = voices.find(voice => 
+                        voice.lang.startsWith('fr') && voice.localService
+                    );
+                }
+                
+                // Dernière option : n'importe quelle voix française
                 if (!selectedVoice) {
                     selectedVoice = voices.find(voice => voice.lang.startsWith('fr'));
                 }
             } else if (isAndroid) {
-                // Sur Android, chercher les voix Google françaises en priorité
+                // Sur Android, priorité aux voix Google françaises
                 selectedVoice = voices.find(voice => 
                     voice.lang === 'fr-FR' && 
-                    voice.name.includes('Google')
+                    (voice.name.includes('Google') || voice.name.includes('French'))
                 );
                 
-                // Sinon, n'importe quelle voix française
+                // Fallback
                 if (!selectedVoice) {
                     selectedVoice = voices.find(voice => voice.lang.startsWith('fr'));
                 }
             } else {
-                // Pour autres plateformes (desktop)
+                // Desktop
                 selectedVoice = voices.find(voice => voice.lang.startsWith('fr'));
             }
             
@@ -2240,13 +2553,13 @@
                 currentUtterance.voice = selectedVoice;
             }
             
-            // Gestion des erreurs pour iOS
+            // Gestion optimisée des erreurs mobile
             currentUtterance.onerror = (event) => {
-                console.log('Erreur synthèse vocale iOS:', event.error);
-                if (event.error === 'interrupted') {
-                    // Normal sur iOS, ne pas afficher d'erreur
+                if (event.error === 'interrupted' || event.error === 'canceled') {
+                    // Normal lors des changements de phase, ne pas logger
                     return;
                 }
+                console.log('Synthèse vocale:', event.error);
             };
             
             currentUtterance.onend = () => {
@@ -2257,22 +2570,22 @@
             try {
                 speechSynth.speak(currentUtterance);
             } catch (error) {
-                console.log('Erreur lors de la synthèse vocale:', error);
+                console.log('Erreur synthèse:', error);
             }
         }
         
-        // Arrêter la voix (optimisé iOS)
+        // Arrêter la voix (optimisé mobile)
         function stopSpeaking() {
             if (speechSynth && speechSynth.speaking) {
                 speechSynth.cancel();
                 
-                // Sur iOS, s'assurer que l'arrêt est effectif
-                if (isIOS) {
+                // Sur mobile, vérification additionnelle
+                if (isIOS || isAndroid) {
                     setTimeout(() => {
                         if (speechSynth.speaking) {
                             speechSynth.cancel();
                         }
-                    }, 100);
+                    }, 50); // Délai réduit pour réactivité
                 }
             }
             currentUtterance = null;
@@ -2405,9 +2718,9 @@
         function updateVoiceVolume(value) {
             voiceConfig.volume = value / 100;
             
-            // Sur iOS, s'assurer que le volume reste dans une plage acceptable
-            if (isIOS && voiceConfig.volume < 0.5) {
-                voiceConfig.volume = 0.5; // Volume minimum pour iOS
+            // Sur mobile, éviter les volumes trop faibles qui causent des coupures
+            if ((isIOS || isAndroid) && voiceConfig.volume < 0.4) {
+                voiceConfig.volume = 0.4; // Volume minimum pour mobile
             }
             
             console.log('🗣️ Volume voix mis à jour:', (voiceConfig.volume * 100) + '%');
@@ -2507,6 +2820,103 @@
             startSession('meditation');
         }
         
+        // Gestion de l'installation PWA
+        function setupInstallPrompt() {
+            // Écouter l'événement beforeinstallprompt
+            window.addEventListener('beforeinstallprompt', (e) => {
+                console.log('💾 Prompt d\'installation PWA disponible');
+                e.preventDefault();
+                deferredPrompt = e;
+                showInstallButton();
+            });
+            
+            // Écouter l'installation réussie
+            window.addEventListener('appinstalled', () => {
+                console.log('✅ App PWA installée avec succès');
+                hideInstallButton();
+                showInstalledMessage();
+                deferredPrompt = null;
+            });
+            
+            // Vérifier si l'app est déjà installée
+            if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
+                console.log('📱 App déjà installée (mode standalone)');
+                isAppInstalled = true;
+                showInstalledMessage();
+            } else if (window.navigator && window.navigator.standalone === true) {
+                console.log('📱 App déjà installée (iOS standalone)');
+                isAppInstalled = true;
+                showInstalledMessage();
+            }
+        }
+        
+        function showInstallButton() {
+            const installBtn = document.getElementById('installButton');
+            const iosInstructions = document.getElementById('iosInstructions');
+            const installedMessage = document.getElementById('appInstalledMessage');
+            
+            if (isAppInstalled) {
+                showInstalledMessage();
+                return;
+            }
+            
+            if (isIOS && !isAppInstalled) {
+                // Sur iOS, afficher les instructions manuelles
+                installBtn.style.display = 'none';
+                iosInstructions.style.display = 'block';
+                installedMessage.style.display = 'none';
+            } else if (deferredPrompt) {
+                // Sur Android/Chrome, afficher le bouton d'installation
+                installBtn.style.display = 'flex';
+                iosInstructions.style.display = 'none';
+                installedMessage.style.display = 'none';
+            }
+        }
+        
+        function hideInstallButton() {
+            const installBtn = document.getElementById('installButton');
+            const iosInstructions = document.getElementById('iosInstructions');
+            
+            installBtn.style.display = 'none';
+            iosInstructions.style.display = 'none';
+        }
+        
+        function showInstalledMessage() {
+            const installBtn = document.getElementById('installButton');
+            const iosInstructions = document.getElementById('iosInstructions');
+            const installedMessage = document.getElementById('appInstalledMessage');
+            
+            installBtn.style.display = 'none';
+            iosInstructions.style.display = 'none';
+            installedMessage.style.display = 'flex';
+        }
+        
+        async function installApp() {
+            if (!deferredPrompt) {
+                console.log('❌ Pas de prompt d\'installation disponible');
+                return;
+            }
+            
+            try {
+                // Afficher le prompt d'installation
+                deferredPrompt.prompt();
+                
+                // Attendre la réponse de l'utilisateur
+                const { outcome } = await deferredPrompt.userChoice;
+                
+                if (outcome === 'accepted') {
+                    console.log('✅ Utilisateur a accepté l\'installation');
+                    hideInstallButton();
+                } else {
+                    console.log('❌ Utilisateur a refusé l\'installation');
+                }
+                
+                deferredPrompt = null;
+            } catch (error) {
+                console.error('Erreur lors de l\'installation:', error);
+            }
+        }
+        
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             console.log('🧘 Instant Opportun - Cohérence Cardiaque Intégrative');
@@ -2516,9 +2926,28 @@
             console.log('✨ Méditations Thématiques - 6 thèmes disponibles');
             console.log('🎧 Pour une expérience optimale, utilisez des écouteurs');
             
-            // Détection et configuration iOS
+            // Initialiser le prompt d'installation PWA
+            setupInstallPrompt();
+            
+            // Vérifier si on peut afficher le bouton d'installation
+            setTimeout(() => {
+                if (isIOS && !isAppInstalled) {
+                    // Sur iOS, toujours afficher les instructions
+                    showInstallButton();
+                } else if (!isAppInstalled && !deferredPrompt) {
+                    // Sur Android, attendre le prompt ou afficher après délai
+                    setTimeout(() => {
+                        if (!deferredPrompt && !isAppInstalled) {
+                            // Pas de prompt automatique, mais on peut suggérer
+                            console.log('💡 Suggestion: Ajouter à l\'écran d\'accueil manuellement');
+                        }
+                    }, 3000);
+                }
+            }, 1000);
+            
+            // Détection et configuration mobile optimisée
             if (isIOS) {
-                console.log('📱 iOS détecté - Configuration vocale optimisée');
+                console.log('📱 iOS détecté - Synthèse vocale optimisée (rate: 0.9)');
                 
                 // Forcer le chargement des voix sur mobile
                 if (speechSynth) {
@@ -2528,14 +2957,27 @@
                     speechSynth.addEventListener('voiceschanged', function() {
                         const voices = speechSynth.getVoices();
                         const frenchVoices = voices.filter(v => v.lang.startsWith('fr'));
+                        const localVoices = frenchVoices.filter(v => v.localService);
                         
-                        if (isIOS) {
-                            console.log(`🗣️ iOS: ${frenchVoices.length} voix française(s) chargée(s)`);
-                        } else if (isAndroid) {
-                            console.log(`🗣️ Android: ${frenchVoices.length} voix française(s) chargée(s)`);
-                        }
+                        console.log(`🗣️ iOS: ${frenchVoices.length} voix française(s), ${localVoices.length} locale(s)`);
                         
                         // Log des voix françaises disponibles pour debug
+                        frenchVoices.forEach(voice => {
+                            const local = voice.localService ? ' (locale)' : '';
+                            console.log(`   - ${voice.name} (${voice.lang})${local}`);
+                        });
+                    });
+                }
+            } else if (isAndroid) {
+                console.log('📱 Android détecté - Synthèse vocale optimisée (rate: 0.95)');
+                
+                if (speechSynth) {
+                    speechSynth.addEventListener('voiceschanged', function() {
+                        const voices = speechSynth.getVoices();
+                        const frenchVoices = voices.filter(v => v.lang.startsWith('fr'));
+                        
+                        console.log(`🗣️ Android: ${frenchVoices.length} voix française(s) chargée(s)`);
+                        
                         frenchVoices.forEach(voice => {
                             console.log(`   - ${voice.name} (${voice.lang})`);
                         });
