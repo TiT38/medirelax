@@ -500,16 +500,18 @@
             width: 0%;
             background: linear-gradient(90deg, #06b6d4, #8b5cf6);
             border-radius: 28px;
-            transition: none;
+            transition: width 0.1s ease-out; /* Transition lissée pour éviter les saccades */
             position: relative;
         }
         
         .breathing-bar-fill.inhale {
             background: linear-gradient(90deg, #06b6d4, #3b82f6);
+            transition: width 0.05s ease-out; /* Transition plus fluide pour l'inspiration */
         }
         
         .breathing-bar-fill.exhale {
             background: linear-gradient(90deg, #8b5cf6, #ec4899);
+            transition: width 0.1s ease-out; /* Transition douce pour l'expiration */
         }
         
         .breathing-counter {
@@ -887,6 +889,18 @@
         .installed-desc {
             font-size: 11px;
             color: rgba(255,255,255,0.7);
+        }
+        
+        /* Animations pour l'installation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 60%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-5px); }
+            80% { transform: translateY(-2px); }
         }
         
         /* Adaptive status compact */
@@ -2235,7 +2249,10 @@
                     width = progress * 100;
                     timeRemaining = Math.ceil(mode.inhale - cycleTime);
                     
-                    barFill.className = 'breathing-bar-fill inhale';
+                    // Transition douce de la classe CSS
+                    if (!barFill.classList.contains('inhale')) {
+                        barFill.className = 'breathing-bar-fill inhale';
+                    }
                     emoji.textContent = '🌬️';
                     instruction.textContent = 'Inspirez';
                     
@@ -2263,10 +2280,15 @@
                     // Phase d'expiration
                     currentPhase = 'exhale';
                     progress = (cycleTime - mode.inhale) / mode.exhale;
-                    width = 100 - (progress * 100);
+                    // Lissage de la largeur pour éviter les saccades
+                    const smoothProgress = Math.min(progress, 1);
+                    width = Math.max(0, 100 - (smoothProgress * 100));
                     timeRemaining = Math.ceil(totalCycle - cycleTime);
                     
-                    barFill.className = 'breathing-bar-fill exhale';
+                    // Transition douce de la classe CSS
+                    if (!barFill.classList.contains('exhale')) {
+                        barFill.className = 'breathing-bar-fill exhale';
+                    }
                     emoji.textContent = '🍃';
                     instruction.textContent = 'Expirez';
                     
@@ -2293,7 +2315,8 @@
                 }
                 
                 lastPhase = currentPhase;
-                barFill.style.width = width + '%';
+                // Application lissée de la largeur
+                barFill.style.width = Math.round(width * 100) / 100 + '%';
                 counter.textContent = timeRemaining;
                 
                 // Guidance de phase à des moments spécifiques
@@ -2840,14 +2863,23 @@
             startSession('meditation');
         }
         
-        // Gestion de l'installation PWA
+        // Gestion de l'installation PWA améliorée
         function setupInstallPrompt() {
             // Écouter l'événement beforeinstallprompt
             window.addEventListener('beforeinstallprompt', (e) => {
-                console.log('💾 Prompt d\'installation PWA disponible');
+                console.log('💾 Prompt d\'installation PWA disponible - Installation automatique possible');
                 e.preventDefault();
                 deferredPrompt = e;
                 showInstallButton();
+                
+                // Tentative d'installation automatique après 3 secondes si première visite
+                setTimeout(() => {
+                    if (deferredPrompt && !isAppInstalled && !localStorage.getItem('installPrompted')) {
+                        console.log('🚀 Tentative d\'installation automatique');
+                        localStorage.setItem('installPrompted', 'true');
+                        installApp();
+                    }
+                }, 3000);
             });
             
             // Écouter l'installation réussie
@@ -2856,6 +2888,7 @@
                 hideInstallButton();
                 showInstalledMessage();
                 deferredPrompt = null;
+                localStorage.setItem('appInstalled', 'true');
             });
             
             // Vérifier si l'app est déjà installée
@@ -2865,6 +2898,10 @@
                 showInstalledMessage();
             } else if (window.navigator && window.navigator.standalone === true) {
                 console.log('📱 App déjà installée (iOS standalone)');
+                isAppInstalled = true;
+                showInstalledMessage();
+            } else if (localStorage.getItem('appInstalled') === 'true') {
+                console.log('📱 App précédemment installée');
                 isAppInstalled = true;
                 showInstalledMessage();
             }
@@ -2881,15 +2918,21 @@
             }
             
             if (isIOS && !isAppInstalled) {
-                // Sur iOS, afficher les instructions manuelles
+                // Sur iOS, améliorer les instructions avec plus de visuel
                 installBtn.style.display = 'none';
                 iosInstructions.style.display = 'block';
                 installedMessage.style.display = 'none';
+                
+                // Clignotement léger pour attirer l'attention
+                iosInstructions.style.animation = 'pulse 2s infinite';
             } else if (deferredPrompt) {
                 // Sur Android/Chrome, afficher le bouton d'installation
                 installBtn.style.display = 'flex';
                 iosInstructions.style.display = 'none';
                 installedMessage.style.display = 'none';
+                
+                // Animation d'attention pour le bouton
+                installBtn.style.animation = 'bounce 1s ease-in-out 3';
             }
         }
         
