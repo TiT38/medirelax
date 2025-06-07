@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Voix</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin: 10px;
+            cursor: pointer;
+        }
+        button:active {
+            background: #45a049;
+        }
+        #status {
+            margin: 20px 0;
+            padding: 20px;
+            background: #333;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        .error {
+            color: #ff6b6b;
+        }
+        .success {
+            color: #51cf66;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test de la Synthèse Vocale</h1>
+    
+    <button onclick="testVoix()">🔊 Tester la voix</button>
+    <button onclick="diagnostic()">🔍 Diagnostic complet</button>
+    <button onclick="forceInit()">🔧 Forcer l'initialisation</button>
+    
+    <div id="status">
+        <p>Statut : En attente...</p>
+    </div>
+
+    <script>
+        const status = document.getElementById('status');
+        
+        function log(message, type = '') {
+            const p = document.createElement('p');
+            p.className = type;
+            p.textContent = message;
+            status.appendChild(p);
+        }
+        
+        function clear() {
+            status.innerHTML = '';
+        }
+        
+        function testVoix() {
+            clear();
+            log('Test de la voix...');
+            
+            if (!window.speechSynthesis) {
+                log('❌ Synthèse vocale non disponible!', 'error');
+                return;
+            }
+            
+            // Annuler tout ce qui est en cours
+            speechSynthesis.cancel();
+            
+            const text = "Test de la synthèse vocale. Si vous entendez ceci, tout fonctionne correctement.";
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'fr-FR';
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+            utterance.volume = 0.8;
+            
+            utterance.onstart = () => log('✅ Voix démarrée', 'success');
+            utterance.onend = () => log('✅ Voix terminée', 'success');
+            utterance.onerror = (e) => log(`❌ Erreur: ${e.error}`, 'error');
+            
+            try {
+                speechSynthesis.speak(utterance);
+                log('Commande envoyée...');
+            } catch (e) {
+                log(`❌ Exception: ${e.message}`, 'error');
+            }
+        }
+        
+        function diagnostic() {
+            clear();
+            log('=== DIAGNOSTIC ===');
+            
+            // Vérifier l'API
+            if (!window.speechSynthesis) {
+                log('❌ API speechSynthesis NON disponible', 'error');
+                log('Votre navigateur ne supporte pas la synthèse vocale');
+                return;
+            }
+            log('✅ API speechSynthesis disponible', 'success');
+            
+            // État
+            log(`Speaking: ${speechSynthesis.speaking}`);
+            log(`Pending: ${speechSynthesis.pending}`);
+            log(`Paused: ${speechSynthesis.paused}`);
+            
+            // Voix
+            const voices = speechSynthesis.getVoices();
+            log(`Nombre de voix: ${voices.length}`);
+            
+            if (voices.length === 0) {
+                log('⚠️ Aucune voix chargée, tentative de chargement...');
+                
+                speechSynthesis.addEventListener('voiceschanged', function() {
+                    const newVoices = speechSynthesis.getVoices();
+                    log(`✅ ${newVoices.length} voix chargées!`, 'success');
+                    
+                    const frVoices = newVoices.filter(v => v.lang.startsWith('fr'));
+                    log(`Voix françaises: ${frVoices.length}`);
+                    
+                    frVoices.forEach(v => {
+                        log(`- ${v.name} (${v.lang})`);
+                    });
+                });
+            } else {
+                const frVoices = voices.filter(v => v.lang.startsWith('fr'));
+                log(`✅ Voix françaises disponibles: ${frVoices.length}`, 'success');
+                
+                frVoices.forEach(v => {
+                    log(`- ${v.name} (${v.lang})`);
+                });
+            }
+            
+            // Navigateur
+            log('');
+            log('=== NAVIGATEUR ===');
+            log(`User Agent: ${navigator.userAgent.substring(0, 50)}...`);
+            log(`Plateforme: ${navigator.platform}`);
+            
+            // Détection mobile
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isAndroid = /Android/.test(navigator.userAgent);
+            
+            if (isIOS) {
+                log('📱 iOS détecté', 'success');
+            } else if (isAndroid) {
+                log('📱 Android détecté', 'success');
+            } else {
+                log('💻 Desktop/Autre');
+            }
+        }
+        
+        function forceInit() {
+            clear();
+            log('Forçage de l\'initialisation...');
+            
+            if (!window.speechSynthesis) {
+                log('❌ Impossible: API non disponible', 'error');
+                return;
+            }
+            
+            // Annuler tout
+            speechSynthesis.cancel();
+            log('✅ Nettoyage effectué');
+            
+            // Créer une utterance silencieuse
+            const silent = new SpeechSynthesisUtterance('');
+            silent.volume = 0;
+            
+            try {
+                speechSynthesis.speak(silent);
+                log('✅ Initialisation forcée');
+            } catch (e) {
+                log(`❌ Erreur: ${e.message}`, 'error');
+            }
+            
+            // Recharger les voix
+            setTimeout(() => {
+                const voices = speechSynthesis.getVoices();
+                log(`Voix après init: ${voices.length}`);
+                
+                if (voices.length > 0) {
+                    log('✅ Succès! Essayez maintenant le test de voix', 'success');
+                } else {
+                    log('⚠️ Toujours pas de voix, cliquez à nouveau ou essayez le test');
+                }
+            }, 500);
+        }
+        
+        // Auto-diagnostic au chargement
+        window.addEventListener('load', () => {
+            setTimeout(diagnostic, 1000);
+        });
+        
+        // Sur mobile, initialiser au premier clic
+        document.addEventListener('click', function initMobile() {
+            if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+                if (window.speechSynthesis) {
+                    const silent = new SpeechSynthesisUtterance('');
+                    silent.volume = 0;
+                    speechSynthesis.speak(silent);
+                    console.log('Init mobile effectuée');
+                }
+            }
+        }, { once: true });
+    </script>
+</body>
+</html>
