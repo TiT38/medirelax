@@ -1,7 +1,7 @@
 {
-  "name": "MediRelax - Cohérence Cardiaque & Méditation",
-  "short_name": "MediRelax",
-  "description": "Application de cohérence cardiaque avec méditations guidées et sons binauraux thérapeutiques",
+  "name": "Instant Opportun - Cohérence Cardiaque",
+  "short_name": "Instant Opportun",
+  "description": "Application de cohérence cardiaque intégrative avec méditations guidées et sons binauraux thérapeutiques",
   "start_url": "./index.html",
   "display": "standalone",
   "theme_color": "#1e3a8a",
@@ -12,23 +12,18 @@
   "categories": ["health", "wellness", "meditation"],
   "icons": [
     {
-      "src": "./icons/icon-72.png",
-      "sizes": "72x72",
+      "src": "./icons/icon-16.png",
+      "sizes": "16x16",
       "type": "image/png"
     },
     {
-      "src": "./icons/icon-96.png",
-      "sizes": "96x96",
+      "src": "./icons/icon-32.png",
+      "sizes": "32x32",
       "type": "image/png"
     },
     {
-      "src": "./icons/icon-128.png",
-      "sizes": "128x128",
-      "type": "image/png"
-    },
-    {
-      "src": "./icons/icon-144.png",
-      "sizes": "144x144",
+      "src": "./icons/icon-120.png",
+      "sizes": "120x120",
       "type": "image/png"
     },
     {
@@ -37,15 +32,15 @@
       "type": "image/png"
     },
     {
+      "src": "./icons/icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
       "src": "./icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
-    },
-    {
-      "src": "./icons/icon-384.png",
-      "sizes": "384x384",
-      "type": "image/png"
     },
     {
       "src": "./icons/icon-512.png",
@@ -60,21 +55,21 @@
       "short_name": "Rapide",
       "description": "Démarrer une session de 3 minutes",
       "url": "./index.html?session=focus",
-      "icons": [{ "src": "./icons/icon-96.png", "sizes": "96x96" }]
+      "icons": [{ "src": "./icons/icon-120.png", "sizes": "120x120" }]
     },
     {
       "name": "SOS Stress",
       "short_name": "SOS",
       "description": "Session d'urgence anti-stress",
       "url": "./index.html?session=sos",
-      "icons": [{ "src": "./icons/icon-96.png", "sizes": "96x96" }]
+      "icons": [{ "src": "./icons/icon-120.png", "sizes": "120x120" }]
     },
     {
       "name": "Méditation",
       "short_name": "Méditer",
       "description": "Méditations thématiques guidées",
       "url": "./index.html?session=meditation",
-      "icons": [{ "src": "./icons/icon-96.png", "sizes": "96x96" }]
+      "icons": [{ "src": "./icons/icon-120.png", "sizes": "120x120" }]
     }
   ]
 }
